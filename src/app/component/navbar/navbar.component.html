@@ -1,0 +1,21 @@
+<nav [class.minimized]="toggle" class="navbar">
+    <header>
+        <button class="navbar-toggler" (click)="onClick($event)">
+            <fa-icon [icon]="faBars"/>
+        </button>
+        <div id="logo">
+            <img src="/assets/FlowSync_Logo.svg" alt="FlowSync logo">
+            <span>FlowSync</span>
+        </div>
+    </header>
+    
+    <div class="navbar-collapse" >
+        <ul class="navbar-nav">
+            @for(module of navItems; track module.name) {
+                <li>
+                    <nav-item [label]=module.name [link]=module.link [icon]=module.icon [child]=module.child/>
+                </li>
+            }
+        </ul>
+    </div>
+</nav>

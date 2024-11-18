@@ -1,0 +1,75 @@
+.navbar {
+    background: linear-gradient(#0B2941 7%, #1C69A7 100%);
+    height: 100%;
+
+    header {
+        width: 100%;
+        height: 50px;
+        border-bottom: 1px solid white;
+        display: grid;
+        grid-template-columns: 50px auto;
+        grid-template-rows: 100%;
+        grid-template-areas: 
+        "navbar-toggler logo";
+    
+        .navbar-toggler {
+            grid-area: navbar-toggler;
+            background: transparent;
+            border: none;
+            cursor: pointer;
+
+            fa-icon {
+                color: white;
+            }
+        }
+    
+        #logo {
+            grid-area: logo;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            
+            img {
+                height: 75%;
+                width: auto;
+            }
+        
+            span {
+                font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+                color: white;
+                font-size: 19px;
+                letter-spacing: 1px;
+            }
+        }
+    }
+
+    .navbar-collapse {
+        width: 100%;
+        height: calc(100% - 50px);
+
+        .navbar-nav {
+            list-style-type: none;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 5px;
+    
+            li {
+                width: calc(100% - 10px);
+                height: fit-content;
+    
+                &:first-child {
+                    margin-top: 5px;
+                }
+    
+                &:last-child {
+                    margin-top: auto;
+                    margin-bottom: 5px;
+                }
+            }
+        }
+    }
+}
+

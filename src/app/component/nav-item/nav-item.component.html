@@ -1,0 +1,23 @@
+@if(child.length != 0) {
+    <button class="nav-accordion" (click)="onClick($event)">
+        <div>
+            <fa-icon [icon]=icon/>
+            <span>{{label}}</span>
+        </div>
+        <fa-icon [icon]=caret size="sm" [class.active]="active"/>
+    </button>
+    <div class="panel">
+        @for(element of child; track element.name) {
+            <nav-item [label]=element.name [link]=element.link [child]=element.child/>
+        }
+    </div>
+} @else {
+    <a [routerLink]="link" class="nav-link">
+        <div>
+            @if(icon != null) {
+                <fa-icon [icon]=icon/>
+            }
+            <span>{{label}}</span>
+        </div>
+    </a>
+}

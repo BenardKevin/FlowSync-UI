@@ -1,0 +1,51 @@
+.nav-accordion {
+    background: transparent;
+    border: none;
+}
+
+.nav-link, .nav-accordion {
+    height: 33px;
+    width: 100%;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 10px;
+    text-decoration: none;
+    border-radius: 5px;
+    cursor: pointer;
+    
+    &:hover {
+        background-color: rgba($color: #ffffff, $alpha: 0.125);
+    }
+
+    div {
+        width: 50px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+
+        span {
+            font-size: 12px;
+        }
+    }
+
+    fa-icon {
+        transition: all 0.2s ease-out;
+    }
+}
+
+.panel {
+    width: 100%;
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.2s ease-out;
+
+    .nav-link {
+        padding-left: 50px;
+    }
+}
+
+.active {
+    transform: rotate(90deg);
+}
