@@ -1,0 +1,25 @@
+@if(data) {
+    <table>
+        <thead>
+          <tr>
+            <th></th>
+            @for(key of keys; track key) {
+              <th>{{key}}</th>
+            }
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          @for(data of data; track data.id) {
+            <tr [class.danger]="!data.available">
+              <td><fa-icon [icon]="faPen" size="sm"/></td>
+              @for(key of keys; track key) {
+                <td>{{data[key]}}</td>
+              }
+              <td><fa-icon [icon]="faTrash" size="sm"/></td>
+            </tr>
+          }
+        </tbody>
+      </table>
+  }
+  

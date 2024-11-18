@@ -1,3 +1,49 @@
 app-navbar {
     grid-area: navbar;
 }
+
+#ribbon {
+    grid-area: tab;
+    width: calc(100% - 25px);
+    height: 100%;
+    display: grid;
+    grid-template-columns: auto 25px;
+    grid-template-rows: 100%;
+    grid-template-areas: 
+    "tab logIcon";
+    justify-self: center;
+    border-bottom: 1px solid rgba($color: #000000, $alpha: 0.1);
+    
+    &.dark {
+        border-bottom: 1px solid var(--secondary);
+    }
+    
+    #logIcon {
+        grid-area: logIcon;
+        place-self: center;
+        cursor: pointer;
+    }
+}
+
+#view {
+    grid-area: view;
+    width: calc(100% - 25px);
+    height: calc(100% - 10px);
+    justify-self: center;
+
+    display: grid;
+    grid-template-columns: 100%;
+    grid-template-rows: 25px auto;
+    grid-template-areas: 
+        "toolbar"
+        "viewContent";
+
+    toolbar {
+        height: 100%;
+        border-bottom: 1px solid rgba($color: #000000, $alpha: 0.1);
+    }
+}
+
+router-outlet {
+    display: none;
+}
