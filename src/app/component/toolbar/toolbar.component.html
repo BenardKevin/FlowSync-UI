@@ -12,4 +12,16 @@
             <span>Export</span>
         </button>
     </div>
+    <div class="right">
+        @if(listView) {
+            <button class="card-view" type="button" aria-label="Display card view" (click)="changeView()">
+                <fa-icon [icon]="faGrip"/>
+            </button>
+        }
+        @if(!listView) {
+            <button class="list-view" type="button" aria-label="Display list view" (click)="changeView()">
+                <fa-icon [icon]="faList"/>
+            </button>
+        }
+    </div>
 </div>
