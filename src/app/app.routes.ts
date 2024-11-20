@@ -1,4 +1,4 @@
-import { Routes, UrlSegment } from '@angular/router';
+import { Routes } from '@angular/router';
 import { ListViewComponent } from './component/list-view/list-view.component';
 import { CardViewComponent } from './component/card-view/card-view.component';
 import { CalendarViewComponent } from './component/calendar-view/calendar-view.component';
