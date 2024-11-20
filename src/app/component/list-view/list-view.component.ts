@@ -1,8 +1,7 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { faPen, faTrash } from '@fortawesome/free-solid-svg-icons';
 import { CommonModule } from '@angular/common';
-import { Router } from '@angular/router';
 import { ProductService } from '../../service/product.service';
 
 @Component({
@@ -13,27 +12,23 @@ import { ProductService } from '../../service/product.service';
   styleUrl: './list-view.component.scss'
 })
 
-export class ListViewComponent {
+export class ListViewComponent implements OnInit {
   faPen = faPen;
   faTrash = faTrash;
   data: any;
   keys: string[] = [];
   filters: string[] = [];
 
-  constructor(
-    private router: Router,
-    private productService: ProductService) {
-      
+  constructor(private productService: ProductService) { }
+
+  ngOnInit() {
     this.addFilters(["id", "available"]);
-      
-    this.router.events.subscribe(() => {
-      this.getData();
-    });
+    this.getProducts();
   }
 
-  getData() {
-    this.productService.getProducts().subscribe(data => {
-      this.data = data;
+  getProducts() {
+    this.productService.getProducts().subscribe(products => {
+      this.data = products;
       
       this.keys = this.getKeys(this.data);
       this.keys = this.keys.filter( (columnName: string) => !this.filters.includes(columnName));

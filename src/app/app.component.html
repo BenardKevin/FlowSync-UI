@@ -5,6 +5,6 @@
 </div>
 
 <div id="view">
-    <toolbar/>
-    <router-outlet />
+    @if(showToolbar) { <toolbar /> }
+    <div id="view-content"> <router-outlet /> </div>
 </div>

@@ -10,11 +10,11 @@
           </tr>
         </thead>
         <tbody>
-          @for(data of data; track data.id) {
-            <tr [class.danger]="!data.available">
+          @for(element of data; track element.id) {
+            <tr [class.danger]="!element.available">
               <td><fa-icon [icon]="faPen" size="sm"/></td>
               @for(key of keys; track key) {
-                <td>{{data[key]}}</td>
+                <td>{{element[key]}}</td>
               }
               <td><fa-icon [icon]="faTrash" size="sm"/></td>
             </tr>

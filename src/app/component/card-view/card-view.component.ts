@@ -14,17 +14,15 @@ export class CardViewComponent implements OnInit {
   faBan = faBan;
   products: any;
 
-  constructor(private productService: ProductService) {
-    
-  }
+  constructor(private productService: ProductService) { }
   
   ngOnInit() {
     this.getProducts();
   }
 
   getProducts() {
-    this.productService.getProducts().subscribe(data => {
-      this.products = data;
+    this.productService.getProducts().subscribe(products => {
+      this.products = products;
     });
   }
 }
