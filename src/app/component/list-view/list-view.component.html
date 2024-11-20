@@ -1,20 +1,31 @@
-@if(data) {
+@if(items) {
     <table>
         <thead>
           <tr>
-            <th></th>
-            @for(key of keys; track key) {
-              <th>{{key}}</th>
+            @if(config.actions?.edit) {
+              <th></th>
             }
-            <th></th>
+
+            @for(column of config.columns; track column.key) {
+              <th [style.width]="column.width">
+                {{ column.label }}
+                @if (column.sortable && config.sortable) {
+                  <button (click)="sortBy(column.key)">↕️</button>
+                }
+              </th>
+            }
+
+            @if(config.actions?.delete) {
+              <th></th>
+            }
           </tr>
         </thead>
         <tbody>
-          @for(data of data; track data.id) {
-            <tr [class.danger]="!data.available">
+          @for(item of items; track item.id) {
+            <tr>
               <td><fa-icon [icon]="faPen" size="sm"/></td>
-              @for(key of keys; track key) {
-                <td>{{data[key]}}</td>
+              @for(column of config.columns; track column.key) {
+                <td>{{ getItemValue(item, column.key) }}</td>
               }
               <td><fa-icon [icon]="faTrash" size="sm"/></td>
             </tr>

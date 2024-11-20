@@ -1,6 +1,6 @@
-import { HttpClient, HttpClientModule } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { faCartShopping, faCoins, faMessage, faCalendar, faGears } from '@fortawesome/free-solid-svg-icons';
+import { faCartShopping, faCoins, faMessage, faCalendar, faGears, faUser } from '@fortawesome/free-solid-svg-icons';
 import { Observable, of } from 'rxjs';
 
 @Injectable({
@@ -12,6 +12,12 @@ export class NavItemService {
   constructor(private http: HttpClient) { }
 
   navItems = [
+    {
+      name: "Contact",
+      icon: faUser,
+      link: "/contact/list-view",
+      child: []
+    },
     {
       name: "Purchase",
       icon: faCartShopping,

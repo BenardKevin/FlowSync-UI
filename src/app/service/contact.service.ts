@@ -1,29 +1,29 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, catchError, map, Observable } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
-import { Product } from '../model/product';
+import { Contact } from '../model/contact';
 
 @Injectable({
   providedIn: 'root'
 })
-export class ProductService {
+export class ContactService {
   readonly apiUrl = "http://localhost:8080";
 
-  private productsSubject = new BehaviorSubject<Product[]>([]);
-  public products = this.productsSubject.asObservable();
+  private contactsSubject = new BehaviorSubject<Contact[]>([]);
+  public contacts = this.contactsSubject.asObservable();
 
   constructor(private http: HttpClient) { }
 
-  public getProducts(): Observable<Product[]> {
-    return this.http.get<Product[]>(`${this.apiUrl}/products`)
+  public getContacts(): Observable<Contact[]> {
+    return this.http.get<Contact[]>(`${this.apiUrl}/contacts`)
       .pipe(
         catchError(() => {
-          this.productsSubject.error('An error occurred');
+          this.contactsSubject.error('An error occurred');
           return [];
         }),
-        map((products) => {
+        map((contacts) => {
           // traitement des données avant de mettre à jour l'état courant
-          return products;
+          return contacts;
         })
       );
   }

@@ -1,20 +1,16 @@
-import { Routes, UrlSegment } from '@angular/router';
-import { ListViewComponent } from './component/list-view/list-view.component';
-import { CardViewComponent } from './component/card-view/card-view.component';
+import { Routes } from '@angular/router';
+import { ContactListViewComponent } from './component/list-view/contact-list-view.component';
 import { CalendarViewComponent } from './component/calendar-view/calendar-view.component';
+import { ProductListViewComponent } from './component/list-view/product-list-view.component';
 
 export const routes: Routes = [
     {
-        matcher: (url) => {
-            return url.length === 2 && url[1].path.endsWith("list-view") ? ({consumed: url}) : null;
-        },
-        component: ListViewComponent
+        path: "contact/list-view",
+        component: ContactListViewComponent
     },
     {
-        matcher: (url) => {
-            return url.length === 2 && url[1].path.endsWith("card-view") ? ({consumed: url}) : null;
-        },
-        component: CardViewComponent
+        path: "product/list-view",
+        component: ProductListViewComponent
     },
     {
         path: "calendar-view",

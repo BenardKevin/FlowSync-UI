@@ -19,9 +19,7 @@ export class NavbarComponent implements OnInit {
   navItems: any;
   toggle: boolean = false;
 
-  constructor(private navItemService: NavItemService) {
-    
-  }
+  constructor(private navItemService: NavItemService) { }
   
   ngOnInit() {
     this.getNavItems();
