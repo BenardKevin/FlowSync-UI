@@ -1,7 +1,8 @@
 import { Component } from '@angular/core';
 import { Router, RouterModule } from '@angular/router';
-import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
+import { FontAwesomeModule, IconDefinition } from '@fortawesome/angular-fontawesome';
 import { faPlus, faCircleArrowUp, faCircleArrowDown, faGrip, faList } from '@fortawesome/free-solid-svg-icons';
+import { UserPreferencesService } from '../../service/user-preferences.service';
 
 @Component({
   selector: 'toolbar',
@@ -12,26 +13,36 @@ import { faPlus, faCircleArrowUp, faCircleArrowDown, faGrip, faList } from '@for
 })
 
 export class ToolbarComponent {
-  faPlus = faPlus;
-  faCircleArrowUp = faCircleArrowUp;
-  faCircleArrowDown = faCircleArrowDown;
-  faGrip = faGrip;
-  faList = faList;
+  faPlus: IconDefinition = faPlus;
+  faCircleArrowUp: IconDefinition = faCircleArrowUp;
+  faCircleArrowDown: IconDefinition = faCircleArrowDown;
+  faGrip: IconDefinition = faGrip;
+  faList: IconDefinition = faList;
 
-  listView = true;
-  show = true;
 
-  constructor(private router: Router) {
+
+  listView!: boolean;
+
+  constructor(private userPrefService: UserPreferencesService, private router: Router) {
+    
+    const mainRoute = this.getMainRoute();
+    if (mainRoute !== "product") return;
+
     
   }
 
+  getMainRoute() {
+    return this.router.url.split('/')[1];
+  }
+
   changeView() {
-    this.listView = !this.listView;
-    
-    if(this.router.url.includes("list-view")) {
-      this.router.navigateByUrl('/product/card-view');
-    } else {
-      this.router.navigateByUrl('/product/list-view');
-    }
+    const mainRoute = this.getMainRoute();
+    if (mainRoute !== "product") return;
+
+    this.listView = this.userPrefService.toggleView();
+    const newViewType = this.listView ? 'card-view' : 'list-view';
+
+    this.router.navigate([`/${mainRoute}/${newViewType}`]);
+
   }
 }
