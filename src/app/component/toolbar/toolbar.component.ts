@@ -19,17 +19,9 @@ export class ToolbarComponent {
   faGrip: IconDefinition = faGrip;
   faList: IconDefinition = faList;
 
-
-
   listView!: boolean;
 
-  constructor(private userPrefService: UserPreferencesService, private router: Router) {
-    
-    const mainRoute = this.getMainRoute();
-    if (mainRoute !== "product") return;
-
-    
-  }
+  constructor(private userPrefService: UserPreferencesService, private router: Router) { }
 
   getMainRoute() {
     return this.router.url.split('/')[1];
@@ -44,5 +36,28 @@ export class ToolbarComponent {
 
     this.router.navigate([`/${mainRoute}/${newViewType}`]);
 
+  }
+
+  leftButtons = [
+    { icon: this.faPlus, label: 'Create new object', class: 'object-creator', action: () => this.createObject() },
+    { icon: this.faCircleArrowUp, label: 'Import', class: 'object-import', action: () => this.importObject() },
+    { icon: this.faCircleArrowDown, label: 'Export', class: 'object-export', action: () => this.exportObject() }
+  ];
+
+  rightButtons = [
+    { icon: this.faGrip, label: 'Display card view', condition: () => this.listView, action: () => this.changeView() },
+    { icon: this.faList, label: 'Display list view',  condition: () => !this.listView, action: () => this.changeView() }
+  ];
+
+  createObject() {
+    console.log('Create new object');
+  }
+
+  importObject() {
+    console.log('Import object');
+  }
+
+  exportObject() {
+    console.log('Export object');
   }
 }
