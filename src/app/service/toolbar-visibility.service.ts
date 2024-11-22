@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Router, NavigationEnd } from '@angular/router';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, Observable, of } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
@@ -12,6 +12,8 @@ export class ToolbarVisibilityService {
   private showToolbarSubject = new BehaviorSubject<boolean>(false);
 
   showToolbar$ = this.showToolbarSubject.asObservable();
+
+  
 
   constructor(private router: Router) {
     this.allowedRoutes = this.generateAllowedRoutes(this.routeCategories, this.routeViewTypes);
@@ -25,6 +27,10 @@ export class ToolbarVisibilityService {
         this.showToolbarSubject.next(shouldShow);
       }
     });
+  }
+
+  getRouteCategories() {
+    return this.routeCategories;
   }
 
   private generateAllowedRoutes(routeCategories: string[], routeViewTypes: string[]): string[] {
