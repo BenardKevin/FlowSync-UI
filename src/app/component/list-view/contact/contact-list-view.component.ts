@@ -1,17 +1,17 @@
 import { CommonModule } from '@angular/common';
 import { Component, inject } from '@angular/core';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
-import { LIST_CONFIG } from './list-view.config';
-import { BaseListViewComponent } from './base-list-view.component';
-import { Contact } from '../../model/contact';
-import { ContactService } from '../../service/contact.service';
+import { LIST_CONFIG } from '../list-view.config';
+import { BaseListViewComponent } from '../base-list-view.component';
+import { Contact } from '../../../model/contact';
+import { ContactService } from '../../../service/contact/contact.service';
 
 @Component({
   selector: 'app-list-view',
   standalone: true,
   imports: [FontAwesomeModule, CommonModule],
-  templateUrl: './list-view.component.html',
-  styleUrl: './list-view.component.scss',
+  templateUrl: '../list-view.component.html',
+  styleUrl: '../list-view.component.scss',
   providers: [{
         provide: LIST_CONFIG,
         useValue: {
@@ -49,5 +49,39 @@ export class ContactListViewComponent extends BaseListViewComponent<Contact> {
 
     getItemValue(item: Contact, key: string): any {
         return item[key as keyof Contact];
+    }
+    protected override sortBy(column: string): void {
+        super.sortBy(column);
+        
+        if(this.sortOrder == 0) {
+            switch(column) {
+                case 'name':
+                    this.items.sort((a, b) => a.name.localeCompare(b.name));
+                    break;
+            }
+        }
+        else if(this.sortOrder == 1) {
+            switch(column) {
+                case 'name':
+                    this.items.sort((a, b) => b.name.localeCompare(a.name));
+                    break;
+            }
+        }
+        else {
+            this.items.sort((a, b) => a.id - b.id);
+        }
+    }
+    
+    protected override delete(id: number): void {
+        super.delete(id);
+        this.contactService.deleteContact(id).subscribe({
+            next: data => {
+                console.log('Delete successful');
+                this.loadContacts();
+            },
+            error: error => {
+                console.error('There was an error!', error);
+            }
+        });
     }
 }

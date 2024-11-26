@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
-import { ProductService } from '../../service/product.service';
+import { ProductService } from '../../service/product/product.service';
 import { faBan } from '@fortawesome/free-solid-svg-icons';
 
 @Component({
