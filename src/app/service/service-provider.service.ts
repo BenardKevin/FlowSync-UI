@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { ProductService } from './product.service';
-import { OrderService } from './order.service';
+import { OrderService } from './order/order.service';
 import { ContactService } from './contact.service';
 import { Contact } from '../model/contact';
 import { Observable } from 'rxjs';

@@ -5,13 +5,13 @@ import { FontAwesomeModule, IconDefinition } from '@fortawesome/angular-fontawes
 import { faPlus, faCircleArrowUp, faCircleArrowDown, faGrip, faList } from '@fortawesome/free-solid-svg-icons';
 import { UserPreferencesService } from '../../service/user-preferences.service';
 import * as XLSX from 'xlsx';
-import { ProductService } from '../../service/product.service';
+import { ProductService } from '../../service/product/product.service';
 import { catchError, throwError } from 'rxjs';
 
 @Component({
   selector: 'toolbar',
   standalone: true,
-  imports: [FontAwesomeModule, RouterModule, FormsModule],
+  imports: [FontAwesomeModule, RouterModule],
   templateUrl: './toolbar.component.html',
   styleUrl: './toolbar.component.scss'
 })
