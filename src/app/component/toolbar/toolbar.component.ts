@@ -38,7 +38,7 @@ export class ToolbarComponent {
   ];
 
   constructor(private productService: ProductService, private userPrefService: UserPreferencesService, private router: Router) { }
-
+  
   getMainRoute() {
     return this.router.url.split('/')[1];
   }
@@ -51,7 +51,6 @@ export class ToolbarComponent {
     const newViewType = this.listView ? 'card-view' : 'list-view';
 
     this.router.navigate([`/${mainRoute}/${newViewType}`]);
-
   }
 
   createObject() {
@@ -76,6 +75,7 @@ export class ToolbarComponent {
     this.productService.getProducts().pipe(
       catchError((error) => {
         console.error('Failed to fetch product data:', error);
+        this.exportTableData();
         return throwError(() => error);
       })
     ).subscribe((products) => {
@@ -127,8 +127,11 @@ export class ToolbarComponent {
     this.dropdownOpen = !this.dropdownOpen;
   }
 
-  setFileFormat(format: string) {
-    this.selectedFileFormat = format;
+  closeDropdown() {
     this.dropdownOpen = false;
-  } 
+  }
+
+  openDropdown() {
+    this.dropdownOpen = true;
+  }
 }
