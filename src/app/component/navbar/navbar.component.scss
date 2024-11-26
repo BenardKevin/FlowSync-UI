@@ -71,5 +71,23 @@
             }
         }
     }
+    &.minimized {
+        max-width: 3.2em;
+        img, span {
+            display: none;
+        }
+    }
 }
-
+@media screen and (max-width: 769px) {
+    .navbar { 
+        max-width: 3.2em;
+        img {
+            position: relative;
+            left: -46px;
+            display: inline !important;
+        }
+        fa-icon, span {
+            display: none;
+        }
+    }
+}

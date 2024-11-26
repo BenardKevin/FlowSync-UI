@@ -1,27 +1,44 @@
 <div class="container">
     <div class="right">
-        <button class="object-creator" type="button" aria-label="Create new object">
-            <fa-icon [icon]="faPlus"/>
-        </button>
-        <button class="object-import" type="button" aria-label="Create new object">
-            <fa-icon [icon]="faCircleArrowUp"/>
-            <span>Import</span>
-        </button>
-        <button class="object-export" type="button" aria-label="Create new object">
-            <fa-icon [icon]="faCircleArrowDown"/>
-            <span>Export</span>
-        </button>
-    </div>
-    <div class="right">
-        @if(listView) {
-            <button class="card-view" type="button" aria-label="Display card view" (click)="changeView()">
-                <fa-icon [icon]="faGrip"/>
-            </button>
+        @for(button of leftButtons; track $index) {
+            @if (button.label === "Export") {
+                        <button [class]="button.class" type="button" [attr.aria-label]="button.label" (click)="button.action()">
+                            <fa-icon [icon]="button.icon"></fa-icon>
+                            <span>Export</span>
+                        </button>
+                        <div class="dropdown">
+                        <button type="button" (click)="this.exportObject()">
+                            <ul class="dropdown-menu" [class.show]="dropdownOpen">
+                                <li></li>
+                                <li (click)="setFileFormat('xlsx')">
+                                    <a>Excel (.xlsx)</a>
+                                </li>
+                                <li (click)="setFileFormat('csv')">
+                                    <a>CSV (.csv)</a>
+                                </li>
+                            </ul>
+                        </button>
+                    </div>
+            }
+            @else {
+                <button [class]="button.class" type="button" [attr.aria-label]="button.label" (click)="button.action()">
+                    <fa-icon [icon]="button.icon"></fa-icon>
+                    @if (button.label !== 'Create new object') {
+                        <span>{{ button.label }}</span>
+                    }
+                </button>
+            }
         }
-        @if(!listView) {
-            <button class="list-view" type="button" aria-label="Display list view" (click)="changeView()">
-                <fa-icon [icon]="faList"/>
-            </button>
-        }
     </div>
+    @if(getMainRoute() === "product") {
+        <div class="right">
+                @for (button of rightButtons; track $index) {
+                    @if (button.condition()) {
+                        <button class="view-button" type="button" [attr.aria-label]="button.label" (click)="button.action()">
+                            <fa-icon [icon]="button.icon"></fa-icon>
+                        </button>
+                    }
+                }
+        </div>
+    }
 </div>

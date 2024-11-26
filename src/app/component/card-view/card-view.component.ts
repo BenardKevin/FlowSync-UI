@@ -21,8 +21,8 @@ export class CardViewComponent implements OnInit {
   }
 
   getProducts() {
-    this.productService.getProducts().subscribe(data => {
-      this.products = data;
+    this.productService.getProducts().subscribe(products => {
+      this.products = products;
     });
   }
 }

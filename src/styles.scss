@@ -27,3 +27,14 @@ app-root {
         "navbar tab"
         "navbar view";
 }
+
+
+@media screen and (max-width: 769px) {
+    app-root {    
+        grid-template-columns: 51px auto;
+
+    }
+}
+app-root:has(.minimized) {
+    grid-template-columns: 51px auto;
+}

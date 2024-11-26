@@ -13,7 +13,6 @@ import interactionPlugin from '@fullcalendar/interaction';
   templateUrl: './calendar-view.component.html',
   styleUrl: './calendar-view.component.scss'
 })
-
 export class CalendarViewComponent {
 
   eventGuid: number = 0;
