@@ -28,6 +28,10 @@ export class ProductService {
       );
   }
   
+  public getProductById(id: number): Observable<Product> {
+    return this.http.get<Product>(`${this.apiUrl}/products/${id}`);
+  }
+  
   public deleteProduct(id: number): Observable<any> {
     return this.http.delete(`${this.apiUrl}/products/${id}`);
   }

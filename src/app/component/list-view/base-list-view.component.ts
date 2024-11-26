@@ -1,6 +1,7 @@
 import { Component, inject } from '@angular/core';
 import { LIST_CONFIG, ListViewConfig } from './list-view.config';
 import { faPen, faTrash, faSort, faSortUp, faSortDown, IconDefinition } from '@fortawesome/free-solid-svg-icons';
+import { ActivatedRoute, Router } from '@angular/router';
 
 @Component({
   standalone: true,
@@ -19,6 +20,8 @@ export class BaseListViewComponent<T> {
   protected faSortUp: IconDefinition = faSortUp;
   protected faSortDown: IconDefinition = faSortDown;
   
+  constructor(private router: Router, private route: ActivatedRoute) { }
+
   protected get totalPages(): number {
     return Math.ceil(this.items.length / this.config.pageSize);
   }
@@ -47,5 +50,13 @@ export class BaseListViewComponent<T> {
 
   protected delete(id: number): void {
     if(!this.config.actions?.delete) return;
+  }
+
+  protected modify(id: number) {
+    const mainRoute = this.router.url.split('/')[1];
+    const newViewType = 'form-view';
+
+    this.router.navigate([`/${mainRoute}/${newViewType}/${id}`]);
+
   }
 }
