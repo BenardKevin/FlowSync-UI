@@ -13,7 +13,6 @@ import interactionPlugin from '@fullcalendar/interaction';
   templateUrl: './calendar-view.component.html',
   styleUrl: './calendar-view.component.scss'
 })
-
 export class CalendarViewComponent {
 
   eventGuid: number = 0;
@@ -50,14 +49,12 @@ export class CalendarViewComponent {
 
   currentEvents = signal<EventApi[]>([]);
 
-  constructor(private changeDetector: ChangeDetectorRef) {
-    
-  }
+  constructor(private changeDetector: ChangeDetectorRef) { }
 
   handleDateSelect(selectInfo: DateSelectArg) {
     const title = prompt('Please enter a new title for your event');
     const calendarApi = selectInfo.view.calendar;
-    let display = 'auto'
+    let display = 'auto';
 
     calendarApi.unselect(); // clear date selection
 

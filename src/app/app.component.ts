@@ -1,20 +1,19 @@
 import { Component, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
 import { RouterOutlet } from '@angular/router';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { NavbarComponent } from './component/navbar/navbar.component';
 import { ToolbarComponent } from './component/toolbar/toolbar.component';
+
 import { faRightToBracket, IconDefinition } from '@fortawesome/free-solid-svg-icons';
 import { ToolbarVisibilityService } from './service/toolbar-visibility.service';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [CommonModule, RouterOutlet, NavbarComponent, ToolbarComponent, FontAwesomeModule],
+  imports: [RouterOutlet, NavbarComponent, ToolbarComponent, FontAwesomeModule],
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss'
 })
-
 export class AppComponent implements OnInit {
   title: string = 'flowsync_ui';
   logIcon: IconDefinition = faRightToBracket;

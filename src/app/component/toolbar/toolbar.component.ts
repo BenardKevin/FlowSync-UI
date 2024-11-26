@@ -15,7 +15,6 @@ import { catchError, throwError } from 'rxjs';
   templateUrl: './toolbar.component.html',
   styleUrl: './toolbar.component.scss'
 })
-
 export class ToolbarComponent {
   faPlus: IconDefinition = faPlus;
   faCircleArrowUp: IconDefinition = faCircleArrowUp;
