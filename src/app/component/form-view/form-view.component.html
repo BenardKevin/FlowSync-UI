@@ -1,12 +1,25 @@
-<div>
-    <h2>{{ title }}</h2>
-    <form [formGroup]="productForm" (ngSubmit)="submitForm()">
+<div class="form-view--container">
+    <h2 class="form-view--title">{{ formViewTitle }}</h2>
+    <form class="form-view--form" [formGroup]="productForm" (ngSubmit)="submitForm()">
+
         @for (field of productForm.controls | keyvalue; track field.key) {
-            <div class="form-group">
-                <label [for]="field.key">{{ field.key | titlecase }}</label><br/>
-                <input type="text" class="form-control" [formControlName]="field.key" [id]="field.key"/>
+            <div class="form-view--group">
+                <label class="form-view--label" [for]="field.key">{{ field.key | titlecase }}</label>
+                <br/>
+                
+                @if (field.key === 'category') {
+                    <select class="form-view--select" [formControlName]="field.key" class="form-control" id="category">
+                        @for (cat of category; track cat.id) {
+                            <option class="form-view--option" [value]="cat.name">{{ cat.name }}</option>
+                        }
+                    </select>
+                } @else {
+                    <input class="form-view--control" type="text" [id]="field.key" [formControlName]="field.key"/>
+                }
             </div>
-            }
-        <button type="submit" class="btn btn-primary">{{ submit }}</button>
+        }
+
+        <button type="button" class="form-view--btn-return" (click)="goBack()">{{ formViewReturn }}</button>
+        <button type="submit" class="form-view--btn-submit">{{ formViewSubmit }}</button>
     </form>
 </div>

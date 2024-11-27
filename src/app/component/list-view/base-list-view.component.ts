@@ -57,6 +57,5 @@ export class BaseListViewComponent<T> {
     const newViewType = 'form-view';
 
     this.router.navigate([`/${mainRoute}/${newViewType}/${id}`]);
-
   }
 }

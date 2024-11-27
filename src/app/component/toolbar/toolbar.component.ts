@@ -22,8 +22,12 @@ export class ToolbarComponent {
   faList: IconDefinition = faList;
 
   listView!: boolean;
-  selectedFileFormat: string = 'xlsx';
+  selectedFileFormat!: string;
   dropdownOpen: boolean = false;
+
+  export: string = "Export";
+  toolbarXlsx: string = "Excel (.xlsx)";
+  toolbarCsv: string = "CSV (.csv)";
 
   leftButtons = [
     { icon: this.faPlus, label: 'Create new object', class: 'object-creator', action: () => this.createObject() },
@@ -74,7 +78,6 @@ export class ToolbarComponent {
     this.productService.getProducts().pipe(
       catchError((error) => {
         console.error('Failed to fetch product data:', error);
-        this.exportTableData();
         return throwError(() => error);
       })
     ).subscribe((products) => {
@@ -102,7 +105,14 @@ export class ToolbarComponent {
     const workBook: XLSX.WorkBook = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(workBook, workSheet, 'Sheet1');
 
-    const fileName = `${baseFileName}.${this.selectedFileFormat}`;
+    const currentDate = new Date();
+    const formattedDate = currentDate.toISOString().split('T')[0];
+    const hours = String(currentDate.getHours()).padStart(2, '0');
+    const minutes = String(currentDate.getMinutes()).padStart(2, '0');
+    const seconds = String(currentDate.getSeconds()).padStart(2, '0');
+  
+    const dateTime = `${formattedDate}_${hours}-${minutes}-${seconds}`;
+    const fileName = `${baseFileName}_${dateTime}.${this.selectedFileFormat}`;
 
     if (this.selectedFileFormat === 'csv') {
       const csvOutput = XLSX.utils.sheet_to_csv(workSheet);
@@ -120,6 +130,10 @@ export class ToolbarComponent {
     link.download = fileName;
     link.click();
     URL.revokeObjectURL(link.href);
+  }
+
+  selectFileFormat(format: string) {
+    this.selectedFileFormat = format;
   }
 
   toggleDropdown() {

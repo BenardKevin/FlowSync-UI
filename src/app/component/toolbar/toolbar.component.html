@@ -4,14 +4,14 @@
             @if (button.label === "Export") {
                 <button [class]="button.class" type="button" [attr.aria-label]="button.label" (click)="button.action()" (mouseenter)="openDropdown()" (mouseleave)="closeDropdown()">
                     <fa-icon [icon]="button.icon"></fa-icon>
-                    <span>Export</span>
+                    <span>{{ export }}</span>
                 </button>
                 <div class="dropdown">
                     <button class="dropdown-button" type="button" (click)="this.exportObject()" (mouseenter)="openDropdown()" (mouseleave)="closeDropdown()">
                         <ul class="dropdown-menu" [class.show]="dropdownOpen">
                             <li></li>
-                            <li><a>Excel (.xlsx)</a></li>
-                            <li><a>CSV (.csv)</a></li>
+                            <li (click)="selectFileFormat('xlsx')"><a>{{ toolbarXlsx }}</a></li>
+                            <li (click)="selectFileFormat('csv')"><a>{{ toolbarCsv }}</a></li>
                         </ul>
                     </button>
                 </div>
