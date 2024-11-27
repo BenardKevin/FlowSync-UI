@@ -21,7 +21,9 @@ import { ProductService } from '../../../service/product/product.service';
             columns: [
                 { key: 'name', label: 'Nom', sortable: true, filterable: true },
                 { key: 'price', label: 'Prix', sortable: true },
-                { key: 'category', label: 'Catégorie', sortable: true, filterable: true },
+                { key: 'category', label: '', subcolumns: [
+                    { key: 'name', label: 'Catégorie', sortable: true, filterable: true, }
+                ]},
             ],
             actions: {
                 edit: true,

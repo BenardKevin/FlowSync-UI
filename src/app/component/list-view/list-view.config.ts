@@ -10,6 +10,13 @@ export interface ListViewConfig {
     sortable?: boolean;
     filterable?: boolean;
     width?: string;
+    subcolumns?: {
+      key: string;
+      label: string;
+      sortable?: boolean;
+      filterable?: boolean;
+      width?: string;
+    }[];
   }[];
   actions?: {
     edit?: boolean;
