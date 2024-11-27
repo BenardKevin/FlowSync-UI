@@ -34,6 +34,7 @@
     "@fullcalendar/timegrid": "^6.1.15",
     "express": "^4.18.2",
     "flowsync-ui": "file:",
+    "gsap": "^3.12.5",
     "ngx-toastr": "^19.0.0",
     "rxjs": "~7.8.0",
     "tslib": "^2.3.0",

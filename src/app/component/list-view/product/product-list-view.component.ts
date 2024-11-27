@@ -49,6 +49,7 @@ export class ProductListViewComponent extends BaseListViewComponent<Product> {
     getItemValue(item: Product, key: string): any {
         return item[key as keyof Product];
     }
+    
     protected override sortBy(column: string): void {
         super.sortBy(column);
 

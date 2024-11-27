@@ -35,11 +35,10 @@
                 width: auto;
             }
         
-            span {
+            h1 {
                 font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
                 color: white;
-                font-size: 19px;
-                letter-spacing: 1px;
+                letter-spacing: 1.5px;
             }
         }
     }
@@ -86,7 +85,7 @@
             left: -46px;
             display: inline !important;
         }
-        fa-icon, span {
+        fa-icon, h1 {
             display: none;
         }
     }

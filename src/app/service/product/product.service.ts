@@ -10,7 +10,7 @@ export class ProductService {
   readonly apiUrl = "http://localhost:8080";
 
   private productsSubject = new BehaviorSubject<Product[]>([]);
-  public products = this.productsSubject.asObservable();
+  public readonly products$ = this.productsSubject.asObservable();
 
   constructor(private http: HttpClient) { }
 
