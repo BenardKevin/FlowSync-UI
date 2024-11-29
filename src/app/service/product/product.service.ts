@@ -65,4 +65,17 @@ export class ProductService {
       })
     );
   }
+
+  importProduct(product: { id: any; name: any; price: any; category_id: any; }): Observable<any> {
+    return this.http.post(`${this.apiUrl}/products`, product)
+    .pipe(
+      map(response => {
+        return response;
+      }),
+      catchError((error) => {
+        console.error('Error importing product:', error);
+        return throwError(() => new Error('Import failed'));
+      })
+    );
+  }
 }

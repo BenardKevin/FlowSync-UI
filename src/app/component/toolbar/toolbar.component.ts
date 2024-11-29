@@ -61,9 +61,50 @@ export class ToolbarComponent {
   }
 
   importObject() {
-    throw new Error('Method not implemented.');
+    const input = document.createElement('input');
+    input.type = 'file';
+    input.accept = '.xlsx, .xls, .csv';
+
+    input.addEventListener('change', () => {
+      const file = input.files?.[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = (e: any) => {
+        const data = new Uint8Array(e.target.result);
+        const workbook = XLSX.read(data, { type: 'array' });
+        const worksheet = workbook.Sheets[workbook.SheetNames[0]];
+        const jsonData: any[] = XLSX.utils.sheet_to_json(worksheet);
+
+        jsonData.forEach((importedProduct: any) => {
+          const formattedProduct = this.transformProductData(importedProduct);
+
+          this.productService.importProduct(formattedProduct).subscribe({
+            next: (response) => {
+              console.log('Product imported successfully:', response);
+            },
+            error: (error) => {
+              console.error('Failed to import product:', error);
+            }
+          });
+        });
+      };
+
+      reader.readAsArrayBuffer(file);
+    });
+
+    input.click();
   }
 
+  private transformProductData(productData: any) {
+    return {
+      id: productData.id,
+      name: productData.name,
+      price: productData.price,
+      category_id: productData.category_id
+    }
+  }
+  
   exportObject() {
     const actualRoute = this.router.url.split('/')[1];
   
@@ -82,7 +123,15 @@ export class ToolbarComponent {
       })
     ).subscribe((products) => {
       if (products && products.length > 0) {
-        const workSheet: XLSX.WorkSheet = XLSX.utils.json_to_sheet(products);
+        const transformedProducts = products.map(product => ({
+          id: product.id,
+          name: product.name,
+          price: product.price,
+          category_id: product.category.id  // Extract category_id
+        }));
+  
+        // Convert transformed data to a worksheet
+        const workSheet: XLSX.WorkSheet = XLSX.utils.json_to_sheet(transformedProducts);
         this.exportToFile(workSheet, 'ProductData');
       } else {
         console.warn('No product data available to export.');

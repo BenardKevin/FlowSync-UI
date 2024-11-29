@@ -4,7 +4,7 @@
 
         @for (field of dataForm.controls | keyvalue: keepOrder; track field.key) {
                 
-                @if (productObjects.includes(field.key)) {
+                @if (productObjects && productObjects.includes(field.key)) {
                     <div class="module-dropdown">
                         <label class="module-dropdown--label" [for]="field.key">{{ field.key | titlecase }}</label>
                         <div class="module-dropdown--select">

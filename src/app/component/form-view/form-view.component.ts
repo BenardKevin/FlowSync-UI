@@ -25,7 +25,7 @@ export class FormViewComponent implements OnInit {
   mainRoute!: string;
   
   data!: any;
-  productObjects: string[] = [''];
+  productObjects!: string[];
 
   selectedCategory: string = '';
   dropdownOpen: boolean = false;
@@ -57,6 +57,7 @@ export class FormViewComponent implements OnInit {
       case 'product':
         data = { name: '', price: 0, category: '' };
         service = this.productService.getProductById(this.id);
+        this.productObjects = ['category'];
         this.loadCategories()
         break;
       case 'contact':
@@ -72,7 +73,6 @@ export class FormViewComponent implements OnInit {
   }
 
   private patchFormData(data: any) {
-    this.checkAndAddObjectsToArray(data);
 
     switch(this.mainRoute) {
       case 'product':
@@ -139,19 +139,6 @@ export class FormViewComponent implements OnInit {
     }
 
     this.dataForm = new FormGroup(formGroup);
-  }
-
-  checkAndAddObjectsToArray(data: any) {
-    this.productObjects = []; 
-
-    Object.keys(data).forEach(key => {
-      const value = data[key as keyof typeof data];
-      if (value && typeof value === 'object' && !Array.isArray(value)) {
-        if (!this.productObjects.includes(key)) {
-          this.productObjects.push(key);
-        }
-      }
-    });
   }
   
   private loadData(service: Observable<any>) {
