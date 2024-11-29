@@ -24,6 +24,10 @@ export const routes: Routes = [
         component: FormViewComponent
     },
     {
+        path: "contact/form-view/:id",
+        component: FormViewComponent
+    },
+    {
         path: "calendar-view",
         component: CalendarViewComponent
     },

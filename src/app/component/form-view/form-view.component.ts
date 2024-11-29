@@ -1,10 +1,14 @@
 import { Component, OnInit } from '@angular/core';
-import { FormGroup, FormControl, ReactiveFormsModule } from '@angular/forms';
+import { FormGroup, FormControl, ReactiveFormsModule, Validators, ValidatorFn } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ProductService } from '../../service/product/product.service';
 import { CommonModule } from '@angular/common';
 import { CategoryService } from '../../service/category/category.service';
 import { Category } from '../../model/category';
+import { Product } from '../../model/product';
+import { ContactService } from '../../service/contact/contact.service';
+import { Contact } from '../../model/contact';
+import { Observable, take } from 'rxjs';
 
 @Component({
   selector: 'app-form-view',
@@ -16,86 +20,167 @@ import { Category } from '../../model/category';
 
 export class FormViewComponent implements OnInit {
   id!: number;
-  productForm!: FormGroup;
-  product!: any;
-  category: Category[] = [];
+  dataForm!: FormGroup;
+  categories: Category[] = [];
+  mainRoute!: string;
+  
+  data!: any;
+  productObjects: string[] = [''];
 
-  formViewTitle: string = 'Modifier le produit';
+  selectedCategory: string = '';
+  dropdownOpen: boolean = false;
+
+  formViewTitle!: string;
   formViewSubmit: string = 'Mettre à jour';
   formViewReturn: string = 'Retour';
+  
+  keepOrder = (): number => 0;
 
   constructor(
-    private productService: ProductService, 
+    private productService: ProductService,
+    private contactService: ContactService,
     private categoryService: CategoryService, 
     private activatedRoute: ActivatedRoute,
     private router: Router
   ) {}
 
   ngOnInit() {
-    this.initForm();
+    this.mainRoute = this.router.url.split('/')[1];
     this.getIdFromRoute();
-    this.getProductById();
-    this.getCategories();
+
+    
+    let data: any;
+    let service!: Observable<any>;
+    this.formViewTitle = 'Modifier le ' + this.mainRoute;
+
+    switch(this.mainRoute) {
+      case 'product':
+        data = { name: '', price: 0, category: '' };
+        service = this.productService.getProductById(this.id);
+        this.loadCategories()
+        break;
+      case 'contact':
+        data = { name: '', firstname: '', email: '', address: '' };
+        service = this.contactService.getContactById(this.id);
+        break;
+        default: throw new Error('Error: Method implemented for route ' + this.mainRoute);
+    }
+
+    this.initForm(data);
+    this.loadData(service);
     this.trackFormChanges();
   }
 
+  private patchFormData(data: any) {
+    this.checkAndAddObjectsToArray(data);
+
+    switch(this.mainRoute) {
+      case 'product':
+        this.dataForm.patchValue({
+          name: (data as Product).name,
+          price: (data as Product).price,
+          category: (data as Product).category?.name
+        });
+        break;
+      case 'contact':
+        this.dataForm.patchValue({
+          name: (data as Contact).name,
+          firstname: (data as Contact).firstname,
+          email: (data as Contact).email,
+          address: (data as Contact).address
+        });
+        break;
+        default: throw new Error('Error: Method implemented for route ' + this.mainRoute);
+    }
+  }
+
   protected submitForm() {
-    if (!this.productForm.valid) return;
+    if (!this.dataForm.valid) return;
 
-    this.product.category = this.category.find(c => c.name === this.productForm.value.category);
 
-    this.productService.updateProductById(this.id, this.product).subscribe({
-      next: response => {
-        console.log(response.message || 'Update successful');
-        this.goBack();
-      },
-      error: error => {
-        console.error('Failed to update product:', error);
+    switch(this.mainRoute) {
+      case 'product':
+      const selectedCategory = this.categories.find(c => c.name === this.dataForm.value.category);
+      if (selectedCategory) this.data.category = selectedCategory;
+
+      this.productService.updateProductById(this.id, this.data).subscribe({
+        next: () => {
+          console.log('Product updated successfully');
+          this.goBack();
+        },
+        error: error => console.error('Failed to update contact:', error)
+      });
+      break;
+    case 'contact':
+      this.contactService.updateContactById(this.id, this.data).subscribe({
+        next: () => {
+          console.log('Contact updated successfully');
+          this.goBack();
+        },
+        error: error => console.error('Failed to update contact:', error)
+      });
+      break;
+      default: throw new Error('Error: Method implemented for route ' + this.mainRoute);
+    }
+  }
+
+  ///////////////////////////////////////////////////
+
+  private initForm(data: any) {
+
+    const formGroup: { [key: string]: FormControl } = {};
+    for (const key in data) {
+      if (data.hasOwnProperty(key)) {
+        formGroup[key] = new FormControl(
+          data[key] || '',
+          this.getValidators(data[key])
+        );
+      }
+    }
+
+    this.dataForm = new FormGroup(formGroup);
+  }
+
+  checkAndAddObjectsToArray(data: any) {
+    this.productObjects = []; 
+
+    Object.keys(data).forEach(key => {
+      const value = data[key as keyof typeof data];
+      if (value && typeof value === 'object' && !Array.isArray(value)) {
+        if (!this.productObjects.includes(key)) {
+          this.productObjects.push(key);
+        }
       }
     });
   }
+  
+  private loadData(service: Observable<any>) {
+    service.pipe(take(1)).subscribe(data => this.patchFormData(data));
+  }
+  
+  private getValidators(value: any): ValidatorFn[] {
+    const validators: ValidatorFn[] = [];
+    validators.push(Validators.required);
+  
+    if (typeof value === 'number') validators.push(Validators.min(0));
+    if (typeof value === 'string' && value.length > 0) validators.push(Validators.minLength(1));
+  
+    return validators;
+  }
 
-  private initForm() {
-    this.productForm = new FormGroup({
-      name: new FormControl(''),
-      price: new FormControl(''),
-      category: new FormControl('')
-    });
+  private loadCategories() {
+    this.categoryService.getCategories().pipe(take(1)).subscribe(category => this.categories = category);
   }
 
   private getIdFromRoute() {
-    this.activatedRoute.paramMap.subscribe(params => {
-      this.id = +params.get('id')!;
-    });
-  }
-
-  private getCategories() {
-    this.categoryService.getCategories().subscribe(category => {
-      this.category = category;
-    });
-  }
-
-  private getProductById() {
-    this.productService.getProductById(this.id).subscribe(product => {
-      this.product = product;
-      this.productForm.patchValue({
-        name: product.name,
-        price: product.price,
-        category: product.category?.name
-      });
-    });
+    this.activatedRoute.paramMap.subscribe(params => this.id = +params.get('id')!);
   }
 
   private trackFormChanges() {
-    this.productForm.valueChanges.subscribe((values) => {
-      this.product = { ...this.product, ...values };
-    });
+    this.dataForm.valueChanges.subscribe(values => this.data = { ...this.data, ...values });
   }
 
   protected goBack() {
-    const mainRoute = this.router.url.split('/')[1];
-    const newViewType = 'list-view';
-
-    this.router.navigate([`/${mainRoute}/${newViewType}`]);
+    this.router.navigate([`/${this.mainRoute}/list-view`]);
   }
 }

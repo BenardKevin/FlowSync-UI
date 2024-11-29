@@ -1,12 +1,12 @@
 import { Injectable } from '@angular/core';
 import { Router, NavigationEnd } from '@angular/router';
-import { BehaviorSubject, Observable, of } from 'rxjs';
+import { BehaviorSubject } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
 })
 export class ToolbarVisibilityService {
-  private routeCategories: string[] = ['product', 'order', 'invoice'];
+  private routeCategories: string[] = ['product', 'order', 'invoice', 'contact'];
   private routeViewTypes: string[] = ['card-view', 'list-view'];
   private allowedRoutes: string[] = [];
   private showToolbarSubject = new BehaviorSubject<boolean>(false);

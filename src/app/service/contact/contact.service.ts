@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, catchError, map, Observable } from 'rxjs';
+import { BehaviorSubject, catchError, map, Observable, throwError } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 import { Contact } from '../../model/contact';
 
@@ -27,8 +27,35 @@ export class ContactService {
         })
       );
   }
+  
+  public getContactById(id: number): Observable<Contact> {
+    return this.http.get<Contact>(`${this.apiUrl}/contacts/${id}`)
+      .pipe(
+        catchError(error => {
+          console.error(`Failed to fetch contact with ID ${id}:`, error);
+          return throwError(() => error);
+        })
+      );
+  }
 
   public deleteContact(id: number): Observable<any> {
     return this.http.delete(`${this.apiUrl}/contacts/${id}`);
+  }
+
+  public updateContactById(id: number, value: any): Observable<any>  {
+    return this.http.put(`${this.apiUrl}/contacts/${id}`, value, { responseType: 'text' })
+    .pipe(
+      map(response => {
+        try {
+          return JSON.parse(response);
+        } catch {
+          return { message: response };
+        }
+      }),
+      catchError(error => {
+        console.error('Update failed:', error);
+        return throwError(() => new Error('Update failed'));
+      })
+    );
   }
 }
