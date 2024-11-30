@@ -5,6 +5,7 @@ import { ProductListViewComponent } from './component/list-view/product/product-
 import { CardViewComponent } from './component/card-view/card-view.component';
 import { GridViewComponent } from './component/grid-view/grid-view.component';
 import { FormViewComponent } from './component/form-view/form-view.component';
+import { HomeComponent } from './component/home/home.component';
 
 export const routes: Routes = [
     {
@@ -33,7 +34,6 @@ export const routes: Routes = [
     },
     {
         path: "**",
-        redirectTo: "",
-        pathMatch: "full"
+        component: HomeComponent
     }
 ];

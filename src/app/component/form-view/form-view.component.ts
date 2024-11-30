@@ -23,7 +23,7 @@ export class FormViewComponent implements OnInit {
   dataForm!: FormGroup;
   categories: Category[] = [];
   mainRoute!: string;
-  
+
   data!: any;
   productObjects!: string[];
 
@@ -33,13 +33,13 @@ export class FormViewComponent implements OnInit {
   formViewTitle!: string;
   formViewSubmit: string = 'Mettre à jour';
   formViewReturn: string = 'Retour';
-  
+
   keepOrder = (): number => 0;
 
   constructor(
     private productService: ProductService,
     private contactService: ContactService,
-    private categoryService: CategoryService, 
+    private categoryService: CategoryService,
     private activatedRoute: ActivatedRoute,
     private router: Router
   ) {}
@@ -48,7 +48,7 @@ export class FormViewComponent implements OnInit {
     this.mainRoute = this.router.url.split('/')[1];
     this.getIdFromRoute();
 
-    
+
     let data: any;
     let service!: Observable<any>;
     this.formViewTitle = 'Modifier le ' + this.mainRoute;
@@ -56,13 +56,13 @@ export class FormViewComponent implements OnInit {
     switch(this.mainRoute) {
       case 'product':
         data = { name: '', price: 0, category: '' };
-        service = this.productService.getProductById(this.id);
+        service = this.productService.getProduct(this.id);
         this.productObjects = ['category'];
         this.loadCategories()
         break;
       case 'contact':
         data = { name: '', firstname: '', email: '', address: '' };
-        service = this.contactService.getContactById(this.id);
+        service = this.contactService.getContact(this.id);
         break;
         default: throw new Error('Error: Method implemented for route ' + this.mainRoute);
     }
@@ -103,7 +103,7 @@ export class FormViewComponent implements OnInit {
       const selectedCategory = this.categories.find(c => c.name === this.dataForm.value.category);
       if (selectedCategory) this.data.category = selectedCategory;
 
-      this.productService.updateProductById(this.id, this.data).subscribe({
+      this.productService.updateProduct(this.id, this.data).subscribe({
         next: () => {
           console.log('Product updated successfully');
           this.goBack();
@@ -112,7 +112,7 @@ export class FormViewComponent implements OnInit {
       });
       break;
     case 'contact':
-      this.contactService.updateContactById(this.id, this.data).subscribe({
+      this.contactService.updateContact(this.id, this.data).subscribe({
         next: () => {
           console.log('Contact updated successfully');
           this.goBack();
@@ -140,18 +140,18 @@ export class FormViewComponent implements OnInit {
 
     this.dataForm = new FormGroup(formGroup);
   }
-  
+
   private loadData(service: Observable<any>) {
     service.pipe(take(1)).subscribe(data => this.patchFormData(data));
   }
-  
+
   private getValidators(value: any): ValidatorFn[] {
     const validators: ValidatorFn[] = [];
     validators.push(Validators.required);
-  
+
     if (typeof value === 'number') validators.push(Validators.min(0));
     if (typeof value === 'string' && value.length > 0) validators.push(Validators.minLength(1));
-  
+
     return validators;
   }
 

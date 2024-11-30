@@ -5,7 +5,7 @@ import { NavbarComponent } from './component/navbar/navbar.component';
 import { ToolbarComponent } from './component/toolbar/toolbar.component';
 
 import { faRightToBracket, IconDefinition } from '@fortawesome/free-solid-svg-icons';
-import { ToolbarVisibilityService } from './service/toolbar-visibility.service';
+import { ToolbarVisibilityService } from './service/toolbar-visibility/toolbar-visibility.service';
 
 @Component({
   selector: 'app-root',

@@ -1,81 +1,127 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, catchError, map, Observable, throwError } from 'rxjs';
-import { HttpClient } from '@angular/common/http';
+import { BehaviorSubject, catchError, forkJoin, Observable, tap, throwError } from 'rxjs';
+import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Product } from '../../model/product';
 
 @Injectable({
   providedIn: 'root'
 })
 export class ProductService {
-  readonly apiUrl = "http://localhost:8080";
+  private readonly apiUrl = 'http://localhost:8080/products';
 
   private productsSubject = new BehaviorSubject<Product[]>([]);
-  public products = this.productsSubject.asObservable();
+  public products$ = this.productsSubject.asObservable();
 
   constructor(private http: HttpClient) { }
 
+  /**
+   * Fetches the list of all products from the API.
+   * Updates the internal product state on success.
+   *
+   * @returns Observable<Product[]> - Observable emitting the list of products.
+   */
   public getProducts(): Observable<Product[]> {
-    return this.http.get<Product[]>(`${this.apiUrl}/products`)
-      .pipe(
-        catchError(() => {
-          this.productsSubject.error('An error occurred while fetching products.');
-          return [];
-        }),
-        map((products) => {
-          // traitement des données avant de mettre à jour l'état courant
-          return products;
-        })
-      );
-  }
-  
-  public getProductById(id: number): Observable<Product> {
-    return this.http.get<Product>(`${this.apiUrl}/products/${id}`)
-      .pipe(
-        catchError(error => {
-          console.error(`Failed to fetch product with ID ${id}:`, error);
-          return throwError(() => error);
-        })
-      );
-  }
-  
-  public deleteProduct(id: number): Observable<any> {
-    return this.http.delete(`${this.apiUrl}/products/${id}`)
-      .pipe(
-        catchError(error => {
-          console.error(`Failed to delete product with ID ${id}:`, error);
-          return throwError(() => error);
-        })
-      );
-
+    return this.http.get<Product[]>(this.apiUrl).pipe(
+      catchError((error) => this.handleError(error, `Failed to fetch products`)),
+      tap((products) => this.productsSubject.next(products))
+    );
   }
 
-  public updateProductById(id: number, value: any): Observable<any>  {
-    return this.http.put(`${this.apiUrl}/products/${id}`, value, { responseType: 'text' })
-    .pipe(
-      map(response => {
-        try {
-          return JSON.parse(response);
-        } catch {
-          return { message: response };
-        }
-      }),
-      catchError(error => {
-        console.error('Update failed:', error);
-        return throwError(() => new Error('Update failed'));
+  /**
+   * Fetches a single product by its ID.
+   *
+   * @param id - The ID of the product to fetch.
+   * @returns Observable<Product> - Observable emitting the requested product.
+   */
+  public getProduct(id: number): Observable<Product> {
+    return this.http.get<Product>(`${this.apiUrl}/${id}`).pipe(
+      catchError((error) => this.handleError(error, `Failed to fetch product with ID ${id}`))
+    );
+  }
+
+  /**
+   * Deletes a product by its ID.
+   * Updates the internal product state by removing the deleted product.
+   *
+   * @param id - The ID of the product to delete.
+   * @returns Observable<void> - Observable that completes when the deletion is successful.
+   */
+  public deleteProduct(id: number): Observable<void> {
+    return this.http.delete<void>(`${this.apiUrl}/${id}`).pipe(
+      catchError((error) => this.handleError(error, `Failed to delete product with ID ${id}`)),
+      tap(() => {
+        const updatedProducts = this.productsSubject.getValue().filter(p => p.id !== id);
+        this.productsSubject.next(updatedProducts);
       })
     );
   }
 
-  importProduct(product: { id: any; name: any; price: any; category_id: any; }): Observable<any> {
-    return this.http.post(`${this.apiUrl}/products`, product)
-    .pipe(
-      map(response => {
-        return response;
-      }),
-      catchError((error) => {
-        console.error('Error importing product:', error);
-        return throwError(() => new Error('Import failed'));
+  /**
+   * Updates multiple products in parallel.
+   *
+   * @param products - An array of partial product objects with updated fields.
+   * @returns Observable<Product[]> - Observable emitting the list of updated products.
+   */
+  public updateProducts(products: Partial<Product>[]): Observable<Product[]> {
+    const updateRequests = products.map(product =>
+      this.updateProduct(product.id!, product)
+    );
+
+    return forkJoin(updateRequests).pipe(
+      catchError((error) => this.handleError(error, 'Failed to update products')),
+      tap((updatedProducts) => {
+        this.productsSubject.next(updatedProducts);
       })
     );
+  }
+
+  /**
+   * Updates a single product by its ID.
+   * Updates the internal product state with the modified product.
+   *
+   * @param id - The ID of the product to update.
+   * @param productData - Partial product data containing fields to update.
+   * @returns Observable<Product> - Observable emitting the updated product.
+   */
+  public updateProduct(id: number, productData: Partial<Product>): Observable<Product> {
+    return this.http.put<Product>(`${this.apiUrl}/${id}`, productData).pipe(
+      catchError((error) => this.handleError(error, 'Failed to update product')),
+      tap((updatedProduct) => {
+        const currentProducts = this.productsSubject.getValue();
+        const updatedProducts = currentProducts.map(product =>
+          product.id === id ? { ...product, ...updatedProduct } : product
+        );
+        this.productsSubject.next(updatedProducts);
+      })
+    );
+  }
+
+  /**
+   * Creates a new product and adds it to the product list.
+   * Updates the internal product state by appending the new product.
+   *
+   * @param product - The product data to create.
+   * @returns Observable<Product> - Observable emitting the created product.
+   */
+  public createProduct(product: any): Observable<Product> {
+    return this.http.post<Product>(this.apiUrl, product).pipe(
+      catchError((error) => this.handleError(error, 'Failed to create product')),
+      tap((newProduct) => {
+        const updatedProducts = [...this.productsSubject.getValue(), newProduct];
+        this.productsSubject.next(updatedProducts);
+      })
+    );
+  }
+
+  /**
+   * Handles HTTP errors by logging and rethrowing them.
+   *
+   * @param error - The HTTP error response object.
+   * @param errorMessage - Custom error message to log.
+   * @returns Observable<never> - Throws an error observable with the custom message.
+   */
+  private handleError(error: HttpErrorResponse, errorMessage?: string) {
+    console.error(`${errorMessage}`, error);
+    return throwError(() => new Error(errorMessage));
   }
 }
