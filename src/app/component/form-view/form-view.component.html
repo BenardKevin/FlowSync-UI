@@ -14,14 +14,14 @@
                                         <option class="module-dropdown--option" [value]="cat.name">{{ cat.name }}</option>
                                     }
                                 }
-                                @if (field.key === 'supplier') {
+                                @else if (field.key === 'supplier') {
                                     @for (cat of suppliers; track cat.id) {
-                                        <option class="module-dropdown--option" [value]="cat.name">{{ cat.name }}</option>
+                                        <option class="module-dropdown--option" [value]="cat.companyName">{{ cat.companyName }}</option>
                                     }
                                 }
-                                @if (field.key === 'address') {
+                                @else if (field.key === 'address') {
                                     @for (cat of addresses; track cat.id) {
-                                        <option class="module-dropdown--option" [value]="cat.name">{{ cat.name }}</option>
+                                        <option class="module-dropdown--option" [value]="cat.streetName">{{ cat.streetName }}</option>
                                     }
                                 }
                             </select>

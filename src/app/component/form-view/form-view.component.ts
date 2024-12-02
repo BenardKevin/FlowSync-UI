@@ -12,6 +12,7 @@ import { Observable, take } from 'rxjs';
 import { Supplier } from '../../model/supplier';
 import { SupplierService } from '../../service/supplier/supplier.service';
 import { AddressService } from '../../service/address/address.service';
+import { Address } from '../../model/address';
 
 @Component({
   selector: 'app-form-view',
@@ -25,8 +26,8 @@ export class FormViewComponent implements OnInit {
   id!: number;
   dataForm!: FormGroup;
   categories: Category[] = [];
-  suppliers: any[] = [];
-  addresses: any[] = [];
+  suppliers: Supplier[] = [];
+  addresses: Address[] = [];
   mainRoute!: string;
 
   data!: any;
@@ -58,18 +59,19 @@ export class FormViewComponent implements OnInit {
 
     let data: any;
     let service!: Observable<any>;
-    this.formViewTitle = 'Modifier le ' + this.mainRoute;
 
     switch(this.mainRoute) {
       case 'product':
-        data = { name: '', price: 0, category: '' , supplier: '' };
+        this.formViewTitle = 'Modifier le produit :';
+        data = { name: '', price: 0, vat: 0, category: '', supplier: '' };
         service = this.productService.getProduct(this.id);
         this.objectsData = ['category', 'supplier'];
         this.loadCategories();
         this.loadSuppliers();
         break;
       case 'contact':
-        data = { lastname: '', firstname: '', email: '', address: ''};
+        this.formViewTitle = 'Modifier le contact :';
+        data = { lastname: '', firstname: '', email: ''};
         service = this.contactService.getContact(this.id);
         this.objectsData = ['address'];
         this.loadAddresses();
@@ -89,6 +91,7 @@ export class FormViewComponent implements OnInit {
         this.dataForm.patchValue({
           name: (data as Product).name,
           price: (data as Product).price,
+          vat: (data as Product).vat,
           category: (data as Product).category?.name,
           supplier: (data as Product).supplier?.companyName
         });
@@ -110,30 +113,37 @@ export class FormViewComponent implements OnInit {
 
     switch(this.mainRoute) {
       case 'product':
-      const selectedCategory = this.categories.find(c => c.name === this.dataForm.value.category);
-      if (selectedCategory) this.data.category = selectedCategory;
-      const selectedSupplier = this.suppliers.find(c => c.name === this.dataForm.value.supplier);
-      if (selectedSupplier) this.data.supplier = selectedSupplier;
-
-      this.productService.updateProduct(this.id, this.data).subscribe({
+        const payload = {
+          name: this.dataForm.value.name,
+          price: this.dataForm.value.price,
+          vat: this.dataForm.value.vat,
+          categoryId: this.categories.find(c => c.name === this.dataForm.value.category)?.id,
+          supplierId: this.suppliers.find(s => s.companyName === this.dataForm.value.supplier)?.id,
+        };
+        console.log(payload);
+      this.productService.updateProduct(this.id, payload).subscribe({
         next: () => {
-          console.log('Product updated successfully');
-          this.goBack();
+          alert('Product updated successfully.');
         },
-        error: error => console.error('Failed to update contact:', error)
+        error: (error) => {
+          console.error('Failed to update product:', error.message);
+        }
       });
       break;
     case 'contact':
+      const selectedAddress = this.addresses.find(c => c.streetName === this.dataForm.value.address);
+      if (selectedAddress) this.data.address = selectedAddress;
+
       this.contactService.updateContact(this.id, this.data).subscribe({
         next: () => {
           console.log('Contact updated successfully');
-          this.goBack();
         },
-        error: error => console.error('Failed to update contact:', error)
+        error: (error) => {console.error('Failed to update contact:', error)}
       });
       break;
       default: throw new Error('Error: Method implemented for route ' + this.mainRoute);
     }
+    this.goBack();
   }
 
   ///////////////////////////////////////////////////

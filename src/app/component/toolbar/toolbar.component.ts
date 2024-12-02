@@ -82,6 +82,8 @@ export class ToolbarComponent {
 
         const route = this.getMainRoute();
         jsonData.forEach((data: any) => {
+          
+        console.log('payload', data)
           this.dataService.createData(route, data).subscribe({
             next: (response: any) => {
               console.log('Product imported successfully:', response);
@@ -110,17 +112,33 @@ export class ToolbarComponent {
       if (data && data.length > 0) {
         const formattedData = this.dataService.formatExportData(route, data);
         const workSheet: XLSX.WorkSheet = XLSX.utils.json_to_sheet(formattedData);
-        this.exportToFile(workSheet, `${route.charAt(0).toUpperCase() + route.slice(1)}Data`);
+        const fileName = this.createFileName(`${route.charAt(0).toUpperCase() + route.slice(1)}Data`);
+
+        this.exportToFile(workSheet, fileName);
       } else {
         console.warn(`No ${route} data available to export.`);
       }
     });
   }
 
-  private exportToFile(workSheet: XLSX.WorkSheet, baseFileName: string) {
-    const workBook: XLSX.WorkBook = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(workBook, workSheet, 'Sheet1');
+  private exportToFile(workSheet: XLSX.WorkSheet, fileName: string) {
+    switch(this.selectedFileFormat) {
+      case 'csv':
+      this.exportToCsv(workSheet, fileName);
+        break;
 
+      default:
+        this.exportToXlsx(workSheet, fileName);
+    }
+  }
+
+  private exportToXlsx(workSheet: XLSX.WorkSheet, fileName: string) {
+    const workBook: XLSX.WorkBook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workBook, workSheet, fileName);
+    XLSX.writeFile(workBook, fileName);
+  }
+
+  private createFileName(baseFileName: string) {
     const currentDate = new Date();
     const formattedDate = currentDate.toISOString().split('T')[0];
     const hours = String(currentDate.getHours()).padStart(2, '0');
@@ -129,19 +147,17 @@ export class ToolbarComponent {
 
     const dateTime = `${formattedDate}_${hours}-${minutes}-${seconds}`;
     const fileName = `${baseFileName}_${dateTime}.${this.selectedFileFormat}`;
+    return fileName;
+  }
 
-    if (this.selectedFileFormat === 'csv') {
-      const csvOutput = XLSX.utils.sheet_to_csv(workSheet);
-      const blob = new Blob([csvOutput], { type: 'text/csv;charset=utf-8;' });
-      const link = document.createElement('a');
-      link.href = URL.createObjectURL(blob);
-      link.download = fileName;
-      link.click();
-      URL.revokeObjectURL(link.href);
-
-    } else {
-      XLSX.writeFile(workBook, fileName);
-    }
+  private exportToCsv(workSheet: XLSX.WorkSheet, fileName: string) {
+    const csvOutput = XLSX.utils.sheet_to_csv(workSheet);
+    const blob = new Blob([csvOutput], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement('a');
+    link.href = URL.createObjectURL(blob);
+    link.download = fileName;
+    link.click();
+    URL.revokeObjectURL(link.href);
   }
 
   selectFileFormat(format: string) {

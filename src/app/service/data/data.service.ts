@@ -16,11 +16,11 @@ export class DataService {
     switch (route) {
       case 'product':
         return this.productService.createProduct({
-          id: data.id,
           name: data.name,
           price: data.price,
-          category_id: data.category_id,
-          supplier_id: data.supplier_id
+          vat: data.vat,
+          categoryId: data.categoryId,
+          supplierId: data.supplierId
         });
       case 'contact':
         return this.contactService.createContact({
@@ -50,11 +50,13 @@ export class DataService {
     switch (route) {
       case 'product':
         return data.map(product => ({
-          id: product.id,
           name: product.name,
           price: product.price,
-          category_id: product.category?.id,
-          supplier_id: product.supplier?.id
+          vat: product.vat,
+          categoryName: product.category?.name,
+          categoryId: product.category?.id,
+          supplierCompanyName: product.supplier?.companyName,
+          supplierId: product.supplier?.id
         }));
       case 'contact':
         return data.map(contact => ({

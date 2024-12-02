@@ -83,7 +83,7 @@ export class ProductService {
    * @param productData - Partial product data containing fields to update.
    * @returns Observable<Product> - Observable emitting the updated product.
    */
-  public updateProduct(id: number, productData: Partial<Product>): Observable<Product> {
+  public updateProduct(id: number, productData: any): Observable<Product> {
     return this.http.put<Product>(`${this.apiUrl}/${id}`, productData).pipe(
       catchError((error) => this.handleError(error, 'Failed to update product')),
       tap((updatedProduct) => {
@@ -104,7 +104,7 @@ export class ProductService {
    * @returns Observable<Product> - Observable emitting the created product.
    */
   public createProduct(product: any): Observable<Product> {
-    return this.http.post<Product>(this.apiUrl, product).pipe(
+    return this.http.post<any>(this.apiUrl, product).pipe(
       catchError((error) => this.handleError(error, 'Failed to create product')),
       tap((newProduct) => {
         const updatedProducts = [...this.productsSubject.getValue(), newProduct];
