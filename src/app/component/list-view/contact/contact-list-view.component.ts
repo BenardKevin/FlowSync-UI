@@ -19,10 +19,9 @@ import { ContactService } from '../../../service/contact/contact.service';
             sortable: true,
             filterable: true,
             columns: [
-                { key: 'name', label: 'Nom', sortable: true, filterable: true },
+                { key: 'lastname', label: 'Nom', sortable: true, filterable: true },
                 { key: 'firstname', label: 'Prénom', sortable: true, filterable: true },
-                { key: 'email', label: 'Email' },
-                { key: 'address', label: 'Adresse' },
+                { key: 'email', label: 'Email', sortable: true, filterable: true }
             ],
             actions: {
                 edit: true,
@@ -43,30 +42,32 @@ export class ContactListViewComponent extends BaseListViewComponent<Contact> {
         this.contactService.getContacts().subscribe(
             contacts => {
                 this.items = contacts;
+                this.cachedItems = this.items;
             }
         );
     }
 
-    getItemValue(item: Contact, key: string): any {
-        return item[key as keyof Contact];
-    }
     protected override sortBy(column: string): void {
         super.sortBy(column);
         
         if(this.sortOrder == 0) {
             switch(column) {
-                case 'name':
-                    this.items.sort((a, b) => a.name.localeCompare(b.name));
+                case 'lastname':
+                    this.items.sort((a, b) => a.lastname.localeCompare(b.lastname));
+                    break;
+                case 'firstname':
+                    this.items.sort((a, b) => a.firstname.localeCompare(b.firstname));
+                    break;
+                case 'email':
+                    this.items.sort((a, b) => a.email.localeCompare(b.email));
                     break;
             }
         }
+
         else if(this.sortOrder == 1) {
-            switch(column) {
-                case 'name':
-                    this.items.sort((a, b) => b.name.localeCompare(a.name));
-                    break;
-            }
+            this.items.reverse();
         }
+
         else {
             this.items.sort((a, b) => a.id - b.id);
         }

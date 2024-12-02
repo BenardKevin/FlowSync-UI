@@ -1,9 +1,12 @@
+import { Address } from "./address"
+
 interface Contact {
     id: number,
-    address: string,
-    email: string,
     firstname: string,
-    name: string
+    lastname: string,
+    email: string,
+    phoneNumber: string
+    address: Address,
 }
 
 export type { Contact }

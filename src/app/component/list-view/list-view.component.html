@@ -13,7 +13,10 @@
                   <th [style.width]="subcolumn.width">
                     {{ subcolumn.label }}
                     @if (subcolumn.sortable && config.sortable) {
-                      <fa-icon [icon]="faSort" size="sm" (click)="sortBy(subcolumn.key)"/>
+                      <fa-icon [icon]="faSort" size="sm" (click)="sortBy(column.key)"/>
+                    }
+                    @if (subcolumn.filterable && config.filterable) {
+                      
                     }
                   </th>
                 }
@@ -24,6 +27,11 @@
                   {{ column.label }}
                   @if (column.sortable && config.sortable) {
                     <fa-icon [icon]="faSort" size="sm" (click)="sortBy(column.key)"/>
+                  }
+                  @if (column.filterable && config.filterable) {
+                    <div>
+                      <input type="search" name="" id="" (input)="filter(column.key, getValue($event))">
+                    </div>
                   }
                 </th>
               }
