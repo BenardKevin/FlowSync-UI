@@ -10,7 +10,7 @@ export class CategoryService {
   private readonly apiUrl = 'http://localhost:8080/categories';
 
   private categoriesSubject = new BehaviorSubject<Category[]>([]);
-  public categories$ = this.categoriesSubject.asObservable();
+  public readonly categories$ = this.categoriesSubject.asObservable();
 
   constructor(private http: HttpClient) { }
 

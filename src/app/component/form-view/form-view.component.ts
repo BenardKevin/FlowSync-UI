@@ -9,6 +9,9 @@ import { Product } from '../../model/product';
 import { ContactService } from '../../service/contact/contact.service';
 import { Contact } from '../../model/contact';
 import { Observable, take } from 'rxjs';
+import { Supplier } from '../../model/supplier';
+import { SupplierService } from '../../service/supplier/supplier.service';
+import { AddressService } from '../../service/address/address.service';
 
 @Component({
   selector: 'app-form-view',
@@ -22,10 +25,12 @@ export class FormViewComponent implements OnInit {
   id!: number;
   dataForm!: FormGroup;
   categories: Category[] = [];
+  suppliers: any[] = [];
+  addresses: any[] = [];
   mainRoute!: string;
 
   data!: any;
-  productObjects!: string[];
+  objectsData!: string[];
 
   selectedCategory: string = '';
   dropdownOpen: boolean = false;
@@ -40,6 +45,8 @@ export class FormViewComponent implements OnInit {
     private productService: ProductService,
     private contactService: ContactService,
     private categoryService: CategoryService,
+    private supplierService: SupplierService,
+    private addressService: AddressService,
     private activatedRoute: ActivatedRoute,
     private router: Router
   ) {}
@@ -55,14 +62,17 @@ export class FormViewComponent implements OnInit {
 
     switch(this.mainRoute) {
       case 'product':
-        data = { name: '', price: 0, category: '' };
+        data = { name: '', price: 0, category: '' , supplier: '' };
         service = this.productService.getProduct(this.id);
-        this.productObjects = ['category'];
-        this.loadCategories()
+        this.objectsData = ['category', 'supplier'];
+        this.loadCategories();
+        this.loadSuppliers();
         break;
       case 'contact':
-        data = { name: '', firstname: '', email: '', address: '' };
+        data = { lastname: '', firstname: '', email: '', address: ''};
         service = this.contactService.getContact(this.id);
+        this.objectsData = ['address'];
+        this.loadAddresses();
         break;
         default: throw new Error('Error: Method implemented for route ' + this.mainRoute);
     }
@@ -79,15 +89,15 @@ export class FormViewComponent implements OnInit {
         this.dataForm.patchValue({
           name: (data as Product).name,
           price: (data as Product).price,
-          category: (data as Product).category?.name
+          category: (data as Product).category?.name,
+          supplier: (data as Product).supplier?.companyName
         });
         break;
       case 'contact':
         this.dataForm.patchValue({
-          name: (data as Contact).name,
+          lastname: (data as Contact).lastname,
           firstname: (data as Contact).firstname,
-          email: (data as Contact).email,
-          address: (data as Contact).address
+          email: (data as Contact).email
         });
         break;
         default: throw new Error('Error: Method implemented for route ' + this.mainRoute);
@@ -102,6 +112,8 @@ export class FormViewComponent implements OnInit {
       case 'product':
       const selectedCategory = this.categories.find(c => c.name === this.dataForm.value.category);
       if (selectedCategory) this.data.category = selectedCategory;
+      const selectedSupplier = this.suppliers.find(c => c.name === this.dataForm.value.supplier);
+      if (selectedSupplier) this.data.supplier = selectedSupplier;
 
       this.productService.updateProduct(this.id, this.data).subscribe({
         next: () => {
@@ -157,6 +169,14 @@ export class FormViewComponent implements OnInit {
 
   private loadCategories() {
     this.categoryService.getCategories().pipe(take(1)).subscribe(category => this.categories = category);
+  }
+  
+  private loadSuppliers() {
+    this.supplierService.getSuppliers().pipe(take(1)).subscribe(supplier => this.suppliers = supplier);
+  }
+
+  private loadAddresses() {
+    this.addressService.getAddresses().pipe(take(1)).subscribe(address => this.addresses = address);
   }
 
   private getIdFromRoute() {

@@ -17,7 +17,7 @@ export class AuthenticationComponent implements AfterViewInit {
 
   login() {
     this.authenticationService.login();
-    this.router.navigateByUrl("");
+    this.router.navigateByUrl("/home");
   }
 
   ngAfterViewInit() {

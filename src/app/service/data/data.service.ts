@@ -19,7 +19,8 @@ export class DataService {
           id: data.id,
           name: data.name,
           price: data.price,
-          category_id: data.category_id
+          category_id: data.category_id,
+          supplier_id: data.supplier_id
         });
       case 'contact':
         return this.contactService.createContact({
@@ -52,7 +53,8 @@ export class DataService {
           id: product.id,
           name: product.name,
           price: product.price,
-          category_id: product.category.id  // Simplify or transform as needed
+          category_id: product.category?.id,
+          supplier_id: product.supplier?.id
         }));
       case 'contact':
         return data.map(contact => ({

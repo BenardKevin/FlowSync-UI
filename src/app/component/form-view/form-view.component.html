@@ -4,13 +4,25 @@
 
         @for (field of dataForm.controls | keyvalue: keepOrder; track field.key) {
                 
-                @if (productObjects && productObjects.includes(field.key)) {
+                @if (objectsData && objectsData.includes(field.key)) {
                     <div class="module-dropdown">
                         <label class="module-dropdown--label" [for]="field.key">{{ field.key | titlecase }}</label>
                         <div class="module-dropdown--select">
                             <select [formControlName]="field.key">
-                                @for (cat of categories; track cat.id) {
-                                    <option class="module-dropdown--option" [value]="cat.name">{{ cat.name }}</option>
+                                @if (field.key === 'category') {
+                                    @for (cat of categories; track cat.id) {
+                                        <option class="module-dropdown--option" [value]="cat.name">{{ cat.name }}</option>
+                                    }
+                                }
+                                @if (field.key === 'supplier') {
+                                    @for (cat of suppliers; track cat.id) {
+                                        <option class="module-dropdown--option" [value]="cat.name">{{ cat.name }}</option>
+                                    }
+                                }
+                                @if (field.key === 'address') {
+                                    @for (cat of addresses; track cat.id) {
+                                        <option class="module-dropdown--option" [value]="cat.name">{{ cat.name }}</option>
+                                    }
                                 }
                             </select>
                         </div>
