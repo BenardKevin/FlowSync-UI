@@ -1,1 +1,33 @@
-<p>form-view works!</p>
+<div class="form-view--container">
+    <form class="form-view--form" [formGroup]="dataForm" (ngSubmit)="submitForm()">
+        <h2 class="form-view--title">{{ formViewTitle }}</h2>
+
+        @for (field of dataForm.controls | keyvalue: keepOrder; track field.key) {
+                
+                @if (productObjects && productObjects.includes(field.key)) {
+                    <div class="module-dropdown">
+                        <label class="module-dropdown--label" [for]="field.key">{{ field.key | titlecase }}</label>
+                        <div class="module-dropdown--select">
+                            <select [formControlName]="field.key">
+                                @for (cat of categories; track cat.id) {
+                                    <option class="module-dropdown--option" [value]="cat.name">{{ cat.name }}</option>
+                                }
+                            </select>
+                        </div>
+                    </div>
+
+                } @else {
+                <div class="module-input">
+                    <label class="module-input--label" [for]="field.key">
+                        <input class="module-input--control" type="text" [id]="field.key" placeholder="&nbsp;" [formControlName]="field.key"/>
+                        <span class="module-input--text">{{ field.key | titlecase }}</span>
+                        <span class="module-input--focus-bg"></span>
+                    </label>
+                </div>
+                }
+        }
+
+        <button type="button" class="form-view--btn-return" (click)="goBack()">{{ formViewReturn }}</button>
+        <button type="submit" class="form-view--btn-submit">{{ formViewSubmit }}</button>
+    </form>
+</div>

@@ -7,6 +7,7 @@ interface Contact {
     email: string,
     phoneNumber: string
     address: Address,
+
 }
 
 export type { Contact }

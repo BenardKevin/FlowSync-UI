@@ -45,7 +45,7 @@
         <tbody>
           @for(item of items; track item.id) {
             <tr>
-              <td><fa-icon [icon]="faPen" size="sm"/></td>
+              <td><fa-icon [icon]="faPen" size="sm"  (click)="modify(item.id)"/></td>
               @for(column of config.columns; track column.key) {
                 @if(column.subcolumns) {
                   @for(subcolumn of column.subcolumns; track subcolumn.key) {

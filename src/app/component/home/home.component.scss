@@ -1,0 +1,52 @@
+.homepage-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  text-align: center;
+  color: #333;
+}
+
+.header {
+  margin-bottom: 30px;
+
+  h1 {
+    font-size: 2.5rem;
+    margin: 0 0 2em 0;
+    position: absolute;
+    left: 10em;
+    top: 6em;
+  }
+
+  p {
+    font-size: 1.2rem;
+    color: #666;
+  }
+}
+
+.actions {
+  display: flex;
+  gap: 15px;
+
+  button {
+    background-color: #007BFF;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1rem;
+    transition: background-color 0.3s;
+
+    &:hover {
+      background-color: #0056b3;
+    }
+  }
+}
+
+.footer {
+  margin-top: 50px;
+  font-size: 0.9rem;
+  color: #999;
+}

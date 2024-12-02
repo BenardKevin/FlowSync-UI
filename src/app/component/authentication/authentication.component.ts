@@ -1,7 +1,7 @@
 import { AfterViewInit, Component, ElementRef, ViewChild } from '@angular/core';
 import { gsap } from 'gsap';
 import EasePack from 'gsap';
-import { AuthenticationService } from '../../service/authentication.service';
+import { AuthenticationService } from '../../service/authentication/authentication.service';
 import { Router } from '@angular/router';
 
 @Component({
