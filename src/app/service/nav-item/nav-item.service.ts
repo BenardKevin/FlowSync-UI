@@ -68,13 +68,13 @@ export class NavItemService {
      },
      {
       name: "Messaging",
-      link: "/",
+      link: "/messaging",
       icon: faMessage,
       child: []
      },
      {
       name: "Administration",
-      link: "/",
+      link: "/administration",
       icon: faGears,
       child: []
      }

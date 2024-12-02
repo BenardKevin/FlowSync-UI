@@ -8,12 +8,33 @@
             }
 
             @for(column of config.columns; track column.key) {
-              <th [style.width]="column.width">
-                {{ column.label }}
-                @if (column.sortable && config.sortable) {
-                  <fa-icon [icon]="faSort" size="sm" (click)="sortBy(column.key)"/>
+              @if(column.subcolumns) {
+                @for(subcolumn of column.subcolumns; track subcolumn.key) {
+                  <th [style.width]="subcolumn.width">
+                    {{ subcolumn.label }}
+                    @if (subcolumn.sortable && config.sortable) {
+                      <fa-icon [icon]="faSort" size="sm" (click)="sortBy(column.key)"/>
+                    }
+                    @if (subcolumn.filterable && config.filterable) {
+                      
+                    }
+                  </th>
                 }
-              </th>
+              }
+
+              @else {
+                <th [style.width]="column.width">
+                  {{ column.label }}
+                  @if (column.sortable && config.sortable) {
+                    <fa-icon [icon]="faSort" size="sm" (click)="sortBy(column.key)"/>
+                  }
+                  @if (column.filterable && config.filterable) {
+                    <div>
+                      <input type="search" name="" id="" (input)="filter(column.key, getValue($event))">
+                    </div>
+                  }
+                </th>
+              }
             }
 
             @if(config.actions?.delete) {
@@ -26,7 +47,15 @@
             <tr>
               <td><fa-icon [icon]="faPen" size="sm"  (click)="modify(item.id)"/></td>
               @for(column of config.columns; track column.key) {
-                <td>{{ getItemValue(item, column.key) }} @if(column.key == "price") { € }</td>
+                @if(column.subcolumns) {
+                  @for(subcolumn of column.subcolumns; track subcolumn.key) {
+                    <td>{{ getItemValue(getItemValue(item, column.key), subcolumn.key) }}</td>
+                  }
+                }
+
+                @else {
+                  <td>{{ getItemValue(item, column.key) }}</td>
+                }
               }
               <td><fa-icon [icon]="faTrash" size="sm" (click)="delete(item.id)"/></td>
             </tr>

@@ -1,10 +1,13 @@
 import { Component, OnInit } from '@angular/core';
-import { RouterOutlet } from '@angular/router';
+import { NavigationEnd, NavigationStart, Router, RouterOutlet } from '@angular/router';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { NavbarComponent } from './component/navbar/navbar.component';
 import { ToolbarComponent } from './component/toolbar/toolbar.component';
 
 import { faRightToBracket, IconDefinition } from '@fortawesome/free-solid-svg-icons';
+
+import { filter } from 'rxjs';
+import { AuthenticationService } from './service/authentication/authentication.service';
 import { ToolbarVisibilityService } from './service/toolbar-visibility/toolbar-visibility.service';
 
 @Component({
@@ -18,12 +21,32 @@ export class AppComponent implements OnInit {
   title: string = 'flowsync_ui';
   logIcon: IconDefinition = faRightToBracket;
   showToolbar: boolean = false;
+  is404: boolean = false;
 
-  constructor(private toolbarVisibilityService: ToolbarVisibilityService) {}
+  constructor(
+    private toolbarVisibilityService: ToolbarVisibilityService,
+    private router: Router,
+    private authenticationService: AuthenticationService) {}
 
   ngOnInit(): void {
+    this.router.events
+      .pipe(filter((event) => event instanceof NavigationEnd))
+      .subscribe(() => {
+        let currentUrl = this.router.url;
+
+        if (currentUrl == '/404' || !this.authenticationService.isAuthenticated()) {
+          this.is404 = true;
+        } else {
+          this.is404 = false;
+        }
+      });
+
     this.toolbarVisibilityService.showToolbar$.subscribe(visibility => {
       this.showToolbar = visibility;
     });
+  }
+
+  logout() {
+    this.authenticationService.logout();
   }
 }

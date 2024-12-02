@@ -21,7 +21,12 @@ import { ProductService } from '../../../service/product/product.service';
             columns: [
                 { key: 'name', label: 'Nom', sortable: true, filterable: true },
                 { key: 'price', label: 'Prix', sortable: true },
-                { key: 'category', label: 'Catégorie', sortable: true, filterable: true },
+                { key: 'category', label: '', subcolumns: [
+                    { key: 'name', label: 'Catégorie', sortable: true, filterable: true }
+                ]},
+                { key: 'supplier', label: '', subcolumns: [
+                    { key: 'companyName', label: 'Fournisseur', sortable: true, filterable: true }
+                ]},
             ],
             actions: {
                 edit: true,
@@ -42,17 +47,16 @@ export class ProductListViewComponent extends BaseListViewComponent<Product> {
         this.productService.getProducts().subscribe(
             products => {
                 this.items = products;
+                this.cachedItems = this.items;
             }
         );
     }
-
-    getItemValue(item: Product, key: string): any {
-        return item[key as keyof Product];
-    }
+    
     protected override sortBy(column: string): void {
         super.sortBy(column);
 
         if(this.sortOrder == 0) {
+
             switch(column) {
                 case 'name':
                     this.items.sort((a, b) => a.name.localeCompare(b.name));
@@ -65,22 +69,15 @@ export class ProductListViewComponent extends BaseListViewComponent<Product> {
                 case 'category':
                     this.items.sort((a, b) => a.category.name.localeCompare(b.category.name));
                     break;
+
+                case 'supplier':
+                    this.items.sort((a, b) => a.supplier.companyName.localeCompare(b.supplier.companyName));
+                    break;
             }
         }
 
         else if(this.sortOrder == 1) {
-            switch(column) {
-                case 'name':
-                    this.items.sort((a, b) => b.name.localeCompare(a.name));
-                    break;
-                
-                case 'price':
-                    this.items.sort((a, b) => b.price - a.price);
-                    break;
-                case 'category':
-                    this.items.sort((a, b) => b.category.name.localeCompare(a.category.name));
-                    break;
-            }
+            this.items.reverse();
         }
 
         else {
@@ -90,7 +87,6 @@ export class ProductListViewComponent extends BaseListViewComponent<Product> {
 
     protected override filter(column: string, value: string): void {
         super.filter(column, value);
-        this.items = this.items.filter( (product) => this.getItemValue(product, column).includes(value) );
     }
     
     protected override delete(id: number): void {

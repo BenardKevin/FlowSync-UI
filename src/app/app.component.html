@@ -1,10 +1,21 @@
-<app-navbar />
+@if(!is404) {
 
-<div id="ribbon" class="">
-    <fa-icon id="logIcon" [icon]=logIcon></fa-icon>
-</div>
+    <app-navbar />
+    
+    <div id="ribbon" class="">
+        <fa-icon id="logIcon" [icon]=logIcon (click)="logout()"></fa-icon>
+    </div>
+    
+    <div id="view">
+        @if(showToolbar) {
+            <toolbar />
+        }
+        <div id="view-content">
+            <router-outlet />
+        </div>
+    </div>
+}
 
-<div id="view">
-    @if(showToolbar) { <toolbar /> }
-    <div id="view-content"> <router-outlet /> </div>
-</div>
+@else {
+    <router-outlet />
+}

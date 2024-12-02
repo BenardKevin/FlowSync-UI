@@ -1,6 +1,6 @@
 import { Component, inject } from '@angular/core';
 import { LIST_CONFIG, ListViewConfig } from './list-view.config';
-import { faPen, faTrash, faSort, faSortUp, faSortDown, IconDefinition } from '@fortawesome/free-solid-svg-icons';
+import { faPen, faTrash, faSort, faFilter, IconDefinition } from '@fortawesome/free-solid-svg-icons';
 import { ActivatedRoute, Router } from '@angular/router';
 
 @Component({
@@ -9,6 +9,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 })
 export class BaseListViewComponent<T> {
   protected items: T[] = [];
+  protected cachedItems: T[] = [];
   protected currentPage: number = 1;
   protected config: ListViewConfig = inject(LIST_CONFIG);
   protected sortOrder: number = 0;
@@ -17,8 +18,7 @@ export class BaseListViewComponent<T> {
   protected faPen: IconDefinition = faPen;
   protected faTrash: IconDefinition = faTrash;
   protected faSort: IconDefinition = faSort;
-  protected faSortUp: IconDefinition = faSortUp;
-  protected faSortDown: IconDefinition = faSortDown;
+  protected faFilter: IconDefinition = faFilter;
   
   constructor(private router: Router, private route: ActivatedRoute) { }
 
@@ -29,6 +29,10 @@ export class BaseListViewComponent<T> {
   protected get visibleItems(): T[] {
     const start = (this.currentPage - 1) * this.config.pageSize;
     return this.items.slice(start, start + this.config.pageSize);
+  }
+
+    getItemValue(item: T, key: string): any {
+      return item[key as keyof T];
   }
 
   protected sortBy(column: string): void {
@@ -43,9 +47,17 @@ export class BaseListViewComponent<T> {
     }
   }
 
+  getValue(event: Event): string {
+    return (event.target as HTMLInputElement).value;
+  }
+
   protected filter(column: string, value: string): void {
     if(!this.config.filterable) return;
     // Logique de filtrage commune
+    
+    this.items = this.cachedItems.filter( (item) => {
+      return new RegExp(value, 'i').test(this.getItemValue(item, column));
+    });
   }
 
   protected delete(id: number): void {
