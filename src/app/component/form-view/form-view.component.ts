@@ -13,6 +13,7 @@ import { Supplier } from '../../model/supplier';
 import { SupplierService } from '../../service/supplier/supplier.service';
 import { AddressService } from '../../service/address/address.service';
 import { Address } from '../../model/address';
+import { DataService } from '../../service/data/data.service';
 
 @Component({
   selector: 'app-form-view',
@@ -47,6 +48,7 @@ export class FormViewComponent implements OnInit {
     private contactService: ContactService,
     private categoryService: CategoryService,
     private supplierService: SupplierService,
+    private dataService: DataService,
     private addressService: AddressService,
     private activatedRoute: ActivatedRoute,
     private router: Router
@@ -55,12 +57,41 @@ export class FormViewComponent implements OnInit {
   ngOnInit() {
     this.mainRoute = this.router.url.split('/')[1];
     this.getIdFromRoute();
+    console.log(this.id)
 
+    if (this.id === 0) {
+      let data: any;
+    let service!: Observable<any>;
 
+    switch (this.mainRoute) {
+      case 'product':
+        this.formViewTitle = 'Créer un nouveau produit :';
+        data = { name: '', price: 0, vat: 0, category: '', supplier: '' };
+        this.objectsData = ['category', 'supplier'];
+        this.loadCategories();
+        this.loadSuppliers();
+        break;
+      case 'contact':
+        this.formViewTitle = 'Créer un nouveau contact :';
+        data = { lastname: '', firstname: '', email: '' };
+        this.objectsData = ['address'];
+        this.loadAddresses();
+        break;
+      default: throw new Error('Error: Method implemented for route ' + this.mainRoute);
+    }
+
+    this.initForm(data);
+    this.trackFormChanges();
+    } else {
+      this.modifyObject();
+    }
+  }
+
+  private modifyObject() {
     let data: any;
     let service!: Observable<any>;
 
-    switch(this.mainRoute) {
+    switch (this.mainRoute) {
       case 'product':
         this.formViewTitle = 'Modifier le produit :';
         data = { name: '', price: 0, vat: 0, category: '', supplier: '' };
@@ -71,16 +102,16 @@ export class FormViewComponent implements OnInit {
         break;
       case 'contact':
         this.formViewTitle = 'Modifier le contact :';
-        data = { lastname: '', firstname: '', email: ''};
+        data = { lastname: '', firstname: '', email: '' };
         service = this.contactService.getContact(this.id);
         this.objectsData = ['address'];
         this.loadAddresses();
         break;
-        default: throw new Error('Error: Method implemented for route ' + this.mainRoute);
+      default: throw new Error('Error: Method implemented for route ' + this.mainRoute);
     }
 
-    this.initForm(data);
     this.loadData(service);
+    this.initForm(data);
     this.trackFormChanges();
   }
 
@@ -120,15 +151,27 @@ export class FormViewComponent implements OnInit {
           categoryId: this.categories.find(c => c.name === this.dataForm.value.category)?.id,
           supplierId: this.suppliers.find(s => s.companyName === this.dataForm.value.supplier)?.id,
         };
-        console.log(payload);
-      this.productService.updateProduct(this.id, payload).subscribe({
-        next: () => {
-          alert('Product updated successfully.');
-        },
-        error: (error) => {
-          console.error('Failed to update product:', error.message);
+
+        const route = this.getMainRoute();
+        if(this.id === 0) {
+          this.dataService.createData(route, payload).subscribe({
+            next: (response: any) => {
+              console.log('Product creadted successfully:', response);
+            },
+            error: (error: any) => {
+              console.error('Failed to create product:', error);
+            }
+          });
+        } else {
+          this.productService.updateProduct(this.id, payload).subscribe({
+            next: () => {
+              alert('Product updated successfully.');
+            },
+            error: (error) => {
+              console.error('Failed to update product:', error.message);
+            }
+          });
         }
-      });
       break;
     case 'contact':
       const selectedAddress = this.addresses.find(c => c.streetName === this.dataForm.value.address);
@@ -199,5 +242,9 @@ export class FormViewComponent implements OnInit {
 
   protected goBack() {
     this.router.navigate([`/${this.mainRoute}/list-view`]);
+  }
+
+  getMainRoute() {
+    return this.router.url.split('/')[1];
   }
 }

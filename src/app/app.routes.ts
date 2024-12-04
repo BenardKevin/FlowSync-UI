@@ -16,12 +16,14 @@ export const routes: Routes = [
         { path: "user", component: UserSettingsComponent },
         { path: "contact", canActivate: [permissionGuard], children: [
             { path: "list-view", component: ContactListViewComponent },
-            { path: "form-view/:id", component: FormViewComponent }
+            { path: "form-view/:id", component: FormViewComponent },
+            { path: "form-view", component: FormViewComponent }
         ]},
         { path: "product", canActivate: [permissionGuard], children: [
             { path: "list-view", component: ProductListViewComponent },
             { path: "card-view", component: CardViewComponent },
-            { path: "form-view/:id", component: FormViewComponent }
+            { path: "form-view/:id", component: FormViewComponent },
+            { path: "form-view", component: FormViewComponent }
         ]},
         { path: "calendar-view", component: CalendarViewComponent },
         { path: "home", component: HomeComponent }

@@ -61,7 +61,10 @@ export class ToolbarComponent {
   }
 
   createObject() {
-    throw new Error('Method not implemented.');
+    const mainRoute = this.router.url.split('/')[1];
+    const newViewType = 'form-view';
+
+    this.router.navigate([`/${mainRoute}/${newViewType}`]);
   }
 
   importObject() {
@@ -82,8 +85,6 @@ export class ToolbarComponent {
 
         const route = this.getMainRoute();
         jsonData.forEach((data: any) => {
-          
-        console.log('payload', data)
           this.dataService.createData(route, data).subscribe({
             next: (response: any) => {
               console.log('Product imported successfully:', response);

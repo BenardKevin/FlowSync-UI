@@ -24,11 +24,11 @@ export class DataService {
         });
       case 'contact':
         return this.contactService.createContact({
-          id: data.id,
-          name: data.name,
           firstname: data.firstname,
+          lastname: data.lastname,
           email: data.email,
-          address: data.address
+          phoneNumber: data.phoneNumber,
+          addressId: data.addressId
         });
       default:
         throw new Error(`Import not supported for route: ${route}`);
@@ -60,10 +60,11 @@ export class DataService {
         }));
       case 'contact':
         return data.map(contact => ({
-          id: contact.id,
-          name: contact.name,
+          firstname: contact.firstname,
+          lastname: contact.lastname,
           email: contact.email,
-          address: contact.address
+          phoneNumber: contact.phoneNumber,
+          addressId: contact.address?.id
         }));
       default:
         throw new Error(`Formatting not supported for route: ${route}`);
