@@ -11,7 +11,7 @@ export class ContactService {
   private readonly apiUrl = 'http://localhost:8080/contacts';
 
   private contactsSubject = new BehaviorSubject<Contact[]>([]);
-  public contacts$ = this.contactsSubject.asObservable();
+  public readonly contacts$ = this.contactsSubject.asObservable();
 
   constructor(private http: HttpClient, private authentication: AuthenticationService) { }
 

@@ -10,7 +10,7 @@ export class OrderService {
   private readonly apiUrl = 'http://localhost:8080/orders';
 
   private ordersSubject = new BehaviorSubject<Order[]>([]);
-  public orders$ = this.ordersSubject.asObservable();
+  public readonly orders$ = this.ordersSubject.asObservable();
 
   constructor(private http: HttpClient) { }
 

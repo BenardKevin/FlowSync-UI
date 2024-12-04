@@ -27,7 +27,7 @@ export class AuthenticationComponent implements AfterViewInit {
         console.error('Login failed', err);
       }
     });
-  } 
+  }
 
   ngAfterViewInit() {
     gsap.registerPlugin(EasePack);

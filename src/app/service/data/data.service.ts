@@ -16,18 +16,19 @@ export class DataService {
     switch (route) {
       case 'product':
         return this.productService.createProduct({
-          id: data.id,
           name: data.name,
           price: data.price,
-          category_id: data.category_id
+          vat: data.vat,
+          categoryId: data.categoryId,
+          supplierId: data.supplierId
         });
       case 'contact':
         return this.contactService.createContact({
-          id: data.id,
-          name: data.name,
           firstname: data.firstname,
+          lastname: data.lastname,
           email: data.email,
-          address: data.address
+          phoneNumber: data.phoneNumber,
+          addressId: data.addressId
         });
       default:
         throw new Error(`Import not supported for route: ${route}`);
@@ -49,17 +50,21 @@ export class DataService {
     switch (route) {
       case 'product':
         return data.map(product => ({
-          id: product.id,
           name: product.name,
           price: product.price,
-          category_id: product.category.id  // Simplify or transform as needed
+          vat: product.vat,
+          categoryName: product.category?.name,
+          categoryId: product.category?.id,
+          supplierCompanyName: product.supplier?.companyName,
+          supplierId: product.supplier?.id
         }));
       case 'contact':
         return data.map(contact => ({
-          id: contact.id,
-          name: contact.name,
+          firstname: contact.firstname,
+          lastname: contact.lastname,
           email: contact.email,
-          address: contact.address
+          phoneNumber: contact.phoneNumber,
+          addressId: contact.address?.id
         }));
       default:
         throw new Error(`Formatting not supported for route: ${route}`);
