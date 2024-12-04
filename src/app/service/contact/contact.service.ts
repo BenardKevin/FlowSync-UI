@@ -1,7 +1,8 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, catchError, forkJoin, Observable, tap, throwError } from 'rxjs';
-import { HttpClient, HttpErrorResponse } from '@angular/common/http';
+import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http';
 import { Contact } from '../../model/contact';
+import { AuthenticationService } from '../authentication/authentication.service';
 
 @Injectable({
   providedIn: 'root'
@@ -12,7 +13,7 @@ export class ContactService {
   private contactsSubject = new BehaviorSubject<Contact[]>([]);
   public contacts$ = this.contactsSubject.asObservable();
 
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient, private authentication: AuthenticationService) { }
 
   /**
    * Fetches the list of all contacts from the API.
@@ -21,7 +22,9 @@ export class ContactService {
    * @returns Observable<Contact[]> - Observable emitting the list of contacts.
    */
   public getContacts(): Observable<Contact[]> {
-    return this.http.get<Contact[]>(this.apiUrl).pipe(
+    const headers = new HttpHeaders().set('Authorization', `Bearer ${this.authentication.getToken()}`);
+
+    return this.http.get<Contact[]>(this.apiUrl, {'headers': headers}).pipe(
       catchError((error) => this.handleError(error, `Failed to fetch contacts`)),
       tap((contacts) => this.contactsSubject.next(contacts))
     );
@@ -34,7 +37,9 @@ export class ContactService {
    * @returns Observable<Contact> - Observable emitting the requested contact.
    */
   public getContact(id: number): Observable<Contact> {
-    return this.http.get<Contact>(`${this.apiUrl}/${id}`).pipe(
+    const headers = new HttpHeaders().set('Authorization', `Bearer ${this.authentication.getToken()}`);
+
+    return this.http.get<Contact>(`${this.apiUrl}/${id}`, {'headers': headers}).pipe(
       catchError((error) => this.handleError(error, `Failed to fetch contact with ID ${id}`))
     );
   }
@@ -47,7 +52,9 @@ export class ContactService {
    * @returns Observable<void> - Observable that completes when the deletion is successful.
    */
   public deleteContact(id: number): Observable<void> {
-    return this.http.delete<void>(`${this.apiUrl}/${id}`).pipe(
+    const headers = new HttpHeaders().set('Authorization', `Bearer ${this.authentication.getToken()}`);
+
+    return this.http.delete<void>(`${this.apiUrl}/${id}`, {'headers': headers}).pipe(
       catchError((error) => this.handleError(error, `Failed to delete contact with ID ${id}`)),
       tap(() => {
         const updatedContacts = this.contactsSubject.getValue().filter(p => p.id !== id);
@@ -84,7 +91,9 @@ export class ContactService {
    * @returns Observable<Contact> - Observable emitting the updated contact.
    */
   public updateContact(id: number, contactData: Partial<Contact>): Observable<Contact> {
-    return this.http.put<Contact>(`${this.apiUrl}/${id}`, contactData).pipe(
+    const headers = new HttpHeaders().set('Authorization', `Bearer ${this.authentication.getToken()}`);
+
+    return this.http.put<Contact>(`${this.apiUrl}/${id}`, contactData, {'headers': headers}).pipe(
       catchError((error) => this.handleError(error, 'Failed to update contact')),
       tap((updatedContact) => {
         const currentContacts = this.contactsSubject.getValue();
@@ -104,7 +113,9 @@ export class ContactService {
    * @returns Observable<Contact> - Observable emitting the created contact.
    */
   public createContact(contact: any): Observable<Contact> {
-    return this.http.post<Contact>(this.apiUrl, contact).pipe(
+    const headers = new HttpHeaders().set('Authorization', `Bearer ${this.authentication.getToken()}`);
+
+    return this.http.post<Contact>(this.apiUrl, contact, {'headers': headers}).pipe(
       catchError((error) => this.handleError(error, 'Failed to create contact')),
       tap((newContact) => {
         const updatedContacts = [...this.contactsSubject.getValue(), newContact];

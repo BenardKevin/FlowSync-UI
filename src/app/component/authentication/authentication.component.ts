@@ -3,22 +3,31 @@ import { gsap } from 'gsap';
 import EasePack from 'gsap';
 import { AuthenticationService } from '../../service/authentication/authentication.service';
 import { Router } from '@angular/router';
+import { User } from '../../model/user';
+import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-authentication',
   standalone: true,
-  imports: [],
+  imports: [FormsModule],
   templateUrl: './authentication.component.html',
   styleUrl: './authentication.component.scss'
 })
 export class AuthenticationComponent implements AfterViewInit {
+  protected credentials: User = { email: '', password: '', username: '' };
 
   constructor(private authenticationService: AuthenticationService, private router: Router) { }
 
-  login() {
-    this.authenticationService.login();
-    this.router.navigateByUrl("");
-  }
+  onSubmit() {
+    this.authenticationService.login(this.credentials).subscribe({
+      next: () => {
+        this.router.navigateByUrl('');
+      },
+      error: (err) => {
+        console.error('Login failed', err);
+      }
+    });
+  } 
 
   ngAfterViewInit() {
     gsap.registerPlugin(EasePack);

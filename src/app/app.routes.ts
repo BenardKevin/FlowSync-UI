@@ -3,7 +3,7 @@ import { ContactListViewComponent } from './component/list-view/contact/contact-
 import { CalendarViewComponent } from './component/calendar-view/calendar-view.component';
 import { ProductListViewComponent } from './component/list-view/product/product-list-view.component';
 import { CardViewComponent } from './component/card-view/card-view.component';
-<<<<<<< HEAD
+
 import { UserSettingsComponent } from './component/user-settings/user-settings.component';
 import { PageNotFoundComponent } from './component/error-page/page-not-found/page-not-found.component';
 import { authenticationGuard } from './guard/authentication.guard';
@@ -26,39 +26,4 @@ export const routes: Routes = [
     { path: "authentication", component: AuthenticationComponent },
     { path: "404", component: PageNotFoundComponent },
     { path: "**", redirectTo: "/404" }
-=======
-import { GridViewComponent } from './component/grid-view/grid-view.component';
-import { FormViewComponent } from './component/form-view/form-view.component';
-import { HomeComponent } from './component/home/home.component';
-
-export const routes: Routes = [
-    {
-        path: "contact/list-view",
-        component: ContactListViewComponent
-    },
-    {
-        path: "product/list-view",
-        component: ProductListViewComponent
-    },
-    {
-        path: "product/**",
-        component: GridViewComponent
-    },
-    {
-        path: "product/form-view/:id",
-        component: FormViewComponent
-    },
-    {
-        path: "contact/form-view/:id",
-        component: FormViewComponent
-    },
-    {
-        path: "calendar-view",
-        component: CalendarViewComponent
-    },
-    {
-        path: "**",
-        component: HomeComponent
-    }
->>>>>>> 60902ef30475168438aef8d18998d3e1d86b81ce
 ];

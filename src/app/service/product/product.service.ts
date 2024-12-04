@@ -1,7 +1,8 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, catchError, forkJoin, Observable, tap, throwError } from 'rxjs';
-import { HttpClient, HttpErrorResponse } from '@angular/common/http';
+import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http';
 import { Product } from '../../model/product';
+import { AuthenticationService } from '../authentication/authentication.service';
 
 @Injectable({
   providedIn: 'root'
@@ -12,7 +13,7 @@ export class ProductService {
   private productsSubject = new BehaviorSubject<Product[]>([]);
   public readonly products$ = this.productsSubject.asObservable();
 
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient, private authentication: AuthenticationService) { }
 
   /**
    * Fetches the list of all products from the API.
@@ -21,7 +22,9 @@ export class ProductService {
    * @returns Observable<Product[]> - Observable emitting the list of products.
    */
   public getProducts(): Observable<Product[]> {
-    return this.http.get<Product[]>(this.apiUrl).pipe(
+    const headers = new HttpHeaders().set('Authorization', `Bearer ${this.authentication.getToken()}`);
+    
+    return this.http.get<Product[]>(this.apiUrl, { 'headers': headers }).pipe(
       catchError((error) => this.handleError(error, `Failed to fetch products`)),
       tap((products) => this.productsSubject.next(products))
     );
@@ -34,7 +37,9 @@ export class ProductService {
    * @returns Observable<Product> - Observable emitting the requested product.
    */
   public getProduct(id: number): Observable<Product> {
-    return this.http.get<Product>(`${this.apiUrl}/${id}`).pipe(
+    const headers = new HttpHeaders().set('Authorization', `Bearer ${this.authentication.getToken()}`);
+
+    return this.http.get<Product>(`${this.apiUrl}/${id}`, { 'headers': headers }).pipe(
       catchError((error) => this.handleError(error, `Failed to fetch product with ID ${id}`))
     );
   }
@@ -47,7 +52,9 @@ export class ProductService {
    * @returns Observable<void> - Observable that completes when the deletion is successful.
    */
   public deleteProduct(id: number): Observable<void> {
-    return this.http.delete<void>(`${this.apiUrl}/${id}`).pipe(
+    const headers = new HttpHeaders().set('Authorization', `Bearer ${this.authentication.getToken()}`);
+
+    return this.http.delete<void>(`${this.apiUrl}/${id}`, { 'headers': headers }).pipe(
       catchError((error) => this.handleError(error, `Failed to delete product with ID ${id}`)),
       tap(() => {
         const updatedProducts = this.productsSubject.getValue().filter(p => p.id !== id);
@@ -84,7 +91,9 @@ export class ProductService {
    * @returns Observable<Product> - Observable emitting the updated product.
    */
   public updateProduct(id: number, productData: Partial<Product>): Observable<Product> {
-    return this.http.put<Product>(`${this.apiUrl}/${id}`, productData).pipe(
+    const headers = new HttpHeaders().set('Authorization', `Bearer ${this.authentication.getToken()}`);
+
+    return this.http.put<Product>(`${this.apiUrl}/${id}`, productData, { 'headers': headers }).pipe(
       catchError((error) => this.handleError(error, 'Failed to update product')),
       tap((updatedProduct) => {
         const currentProducts = this.productsSubject.getValue();
@@ -104,7 +113,9 @@ export class ProductService {
    * @returns Observable<Product> - Observable emitting the created product.
    */
   public createProduct(product: any): Observable<Product> {
-    return this.http.post<Product>(this.apiUrl, product).pipe(
+    const headers = new HttpHeaders().set('Authorization', `Bearer ${this.authentication.getToken()}`);
+    
+    return this.http.post<Product>(this.apiUrl, product, { 'headers': headers }).pipe(
       catchError((error) => this.handleError(error, 'Failed to create product')),
       tap((newProduct) => {
         const updatedProducts = [...this.productsSubject.getValue(), newProduct];
